@@ -1,0 +1,8 @@
+.golden-background {
+  background: rgb(212,175,55);
+background: linear-gradient(90deg, rgba(212,175,55,1) 0%, rgba(255,232,37,1) 53%, rgba(122,97,0,1) 100%);
+}
+
+.text-with-border {
+  text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
+}
