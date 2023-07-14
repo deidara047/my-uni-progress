@@ -4,6 +4,10 @@
   align-items: center;
   justify-content: center;
 }
+
+/* .course-card {
+  cursor: pointer;
+} */
 </style>
 
 <template>
@@ -43,12 +47,12 @@ const props = defineProps({
 })
 
 function getColorByBelongsTo(belTo, isBg) {
-  if(isBg === true) {
+  if (isBg === true) {
     return belTo === 1 ? "hsl(80, 43%, 33%)" : (belTo === 2 ? "hsl(191, 52%, 31%)" : (belTo === 3 ? "hsl(45, 100%, 46%)" : ""));
   } else {
     return belTo === 1 ? "#76933b" : (belTo === 2 ? "#31869a" : (belTo === 3 ? "#ffc000" : ""));
   }
-  
+
 }
 
 </script>

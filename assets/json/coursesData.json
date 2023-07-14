@@ -136,7 +136,7 @@
     "name": "Introducción a la Programación y Computación 1",
     "isRequired": true,
     "prerequisites": ["0103","0147","0960"],
-    "isPassed": false,
+    "isPassed": true,
     "belongsTo": 1
   },
   {
@@ -156,7 +156,7 @@
     "name": "Física 1",
     "isRequired": true,
     "prerequisites": ["0103","0147"],
-    "isPassed": false,
+    "isPassed": true,
     "belongsTo": 0
   },
   {
@@ -166,6 +166,16 @@
     "name": "Ética Profesional",
     "isRequired": false,
     "prerequisites": ["0019"],
+    "isPassed": false,
+    "belongsTo": 0
+  },
+  {
+    "semester": 3,
+    "code": "0009",
+    "credits": 3,
+    "name": "Idioma Técnico 3",
+    "isRequired": true,
+    "prerequisites": ["0008"],
     "isPassed": false,
     "belongsTo": 0
   },
@@ -206,6 +216,16 @@
     "name": "Área Matemática Intermedia 3",
     "isRequired": true,
     "prerequisites": ["0107"],
+    "isPassed": false,
+    "belongsTo": 0
+  },
+  {
+    "semester": 4,
+    "code": "0152",
+    "credits": 6,
+    "name": "Física 2",
+    "isRequired": true,
+    "prerequisites": ["0107", "0150"],
     "isPassed": false,
     "belongsTo": 0
   },
