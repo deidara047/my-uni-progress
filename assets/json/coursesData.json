@@ -1,0 +1,731 @@
+[
+  {
+    "semester": 1,
+    "code": "0017",
+    "credits": 3,
+    "name": "Área Social Humanística 1",
+    "isRequired": true,
+    "prerequisites": [],
+    "isPassed": true,
+    "belongsTo": 0
+  },
+  {
+    "semester": 1,
+    "code": "0101",
+    "credits": 9,
+    "name": "Área Matemática Básica 1",
+    "isRequired": true,
+    "prerequisites": [],
+    "isPassed": true,
+    "belongsTo": 0
+  },
+  {
+    "semester": 1,
+    "code": "0005",
+    "credits": 3,
+    "name": "Técnicas de Estudio e Investigación",
+    "isRequired": true,
+    "prerequisites": [],
+    "isPassed": true,
+    "belongsTo": 0
+  },
+  {
+    "semester": 1,
+    "code": "0039",
+    "credits": 2,
+    "name": "Deportes 1",
+    "isRequired": false,
+    "prerequisites": [],
+    "isPassed": true,
+    "belongsTo": 0
+  },
+  {
+    "semester": 1,
+    "code": "0006",
+    "credits": 3,
+    "name": "Idioma Técnico 1",
+    "isRequired": true,
+    "prerequisites": [],
+    "isPassed": true,
+    "belongsTo": 0
+  },
+  {
+    "semester": 2,
+    "code": "0019",
+    "credits": 3,
+    "name": "Área Social Humanística 2",
+    "isRequired": true,
+    "prerequisites": ["0017"],
+    "isPassed": true,
+    "belongsTo": 0
+  },
+  {
+    "semester": 2,
+    "code": "0103",
+    "credits": 9,
+    "name": "Área Matemática Básica 2",
+    "isRequired": true,
+    "prerequisites": ["0101"],
+    "isPassed": true,
+    "belongsTo": 0
+  },
+  {
+    "semester": 2,
+    "code": "0960",
+    "credits": 5,
+    "name": "Matemática Para Computación 1",
+    "isRequired": true,
+    "prerequisites": ["0101"],
+    "isPassed": true,
+    "belongsTo": 3
+  },
+  {
+    "semester": 2,
+    "code": "0147",
+    "credits": 5,
+    "name": "Física Básica",
+    "isRequired": true,
+    "prerequisites": ["0101"],
+    "isPassed": true,
+    "belongsTo": 0
+  },
+  {
+    "semester": 2,
+    "code": "0040",
+    "credits": 2,
+    "name": "Deportes 2",
+    "isRequired": false,
+    "prerequisites": ["0039"],
+    "isPassed": true,
+    "belongsTo": 0
+  },
+  {
+    "semester": 2,
+    "code": "0008",
+    "credits": 3,
+    "name": "Idioma Técnico 2",
+    "isRequired": true,
+    "prerequisites": ["0006"],
+    "isPassed": true,
+    "belongsTo": 0
+  },
+  {
+    "semester": 3,
+    "code": "0795",
+    "credits": 3,
+    "name": "Lógica de Sistemas",
+    "isRequired": true,
+    "prerequisites": ["0103","0147","0960"],
+    "isPassed": true,
+    "belongsTo": 2
+  },
+  {
+    "semester": 3,
+    "code": "0962",
+    "credits": 5,
+    "name": "Matemática Para Computación 2",
+    "isRequired": true,
+    "prerequisites": ["0103","0147","0960"],
+    "isPassed": true,
+    "belongsTo": 3
+  },
+  {
+    "semester": 3,
+    "code": "0770",
+    "credits": 6,
+    "name": "Introducción a la Programación y Computación 1",
+    "isRequired": true,
+    "prerequisites": ["0103","0147","0960"],
+    "isPassed": false,
+    "belongsTo": 1
+  },
+  {
+    "semester": 3,
+    "code": "0107",
+    "credits": 9,
+    "name": "Área Matemática Intermedia 1",
+    "isRequired": true,
+    "prerequisites": ["0103"],
+    "isPassed": true,
+    "belongsTo": 0
+  },
+  {
+    "semester": 3,
+    "code": "0150",
+    "credits": 5,
+    "name": "Física 1",
+    "isRequired": true,
+    "prerequisites": ["0103","0147"],
+    "isPassed": false,
+    "belongsTo": 0
+  },
+  {
+    "semester": 3,
+    "code": "0001",
+    "credits": 2,
+    "name": "Ética Profesional",
+    "isRequired": false,
+    "prerequisites": ["0019"],
+    "isPassed": false,
+    "belongsTo": 0
+  },
+  {
+    "semester": 4,
+    "code": "0796",
+    "credits": 4,
+    "name": "Lenguajes Formales y de Programación",
+    "isRequired": true,
+    "prerequisites": ["0770","0795","0960"],
+    "isPassed": false,
+    "belongsTo": 3
+  },
+  {
+    "semester": 4,
+    "code": "0771",
+    "credits": 6,
+    "name": "Introducción a la Programación y Computación 2",
+    "isRequired": true,
+    "prerequisites": ["0107","0770","0795","0960"],
+    "isPassed": false,
+    "belongsTo": 1
+  },
+  {
+    "semester": 4,
+    "code": "0112",
+    "credits": 6,
+    "name": "Área Matemática Intermedia 2",
+    "isRequired": true,
+    "prerequisites": ["0107"],
+    "isPassed": false,
+    "belongsTo": 0
+  },
+  {
+    "semester": 4,
+    "code": "0114",
+    "credits": 6,
+    "name": "Área Matemática Intermedia 3",
+    "isRequired": true,
+    "prerequisites": ["0107"],
+    "isPassed": false,
+    "belongsTo": 0
+  },
+  {
+    "semester": 4,
+    "code": "0010",
+    "credits": 1,
+    "name": "Lógica",
+    "isRequired": false,
+    "prerequisites": ["0019"],
+    "isPassed": false,
+    "belongsTo": 0
+  },
+  {
+    "semester": 4,
+    "code": "0011",
+    "credits": 3,
+    "name": "Idioma Técnico 4",
+    "isRequired": true,
+    "prerequisites": ["0009"],
+    "isPassed": false,
+    "belongsTo": 0
+  },
+  {
+    "semester": 4,
+    "code": "2025",
+    "credits": 0,
+    "name": "Prácticas Iniciales",
+    "isRequired": true,
+    "prerequisites": ["0103","0770"],
+    "isPassed": false,
+    "belongsTo": 0
+  },
+  {
+    "semester": 5,
+    "code": "0732",
+    "credits": 5,
+    "name": "Estadística 1",
+    "isRequired": true,
+    "prerequisites": ["0107","0005"],
+    "isPassed": false,
+    "belongsTo": 2
+  },
+  {
+    "semester": 5,
+    "code": "0777",
+    "credits": 6,
+    "name": "Organización de Lenguajes y Compiladores 1",
+    "isRequired": true,
+    "prerequisites": ["0771","0796","0962"],
+    "isPassed": false,
+    "belongsTo": 3
+  },
+  {
+    "semester": 5,
+    "code": "0964",
+    "credits": 4,
+    "name": "Organización Computacional",
+    "isRequired": true,
+    "prerequisites": ["0152","0771","0962"],
+    "isPassed": false,
+    "belongsTo": 3
+  },
+  {
+    "semester": 5,
+    "code": "0772",
+    "credits": 6,
+    "name": "Estructuras de Datos",
+    "isRequired": true,
+    "prerequisites": ["0771","0796","0962"],
+    "isPassed": false,
+    "belongsTo": 1
+  },
+  {
+    "semester": 5,
+    "code": "0116",
+    "credits": 5,
+    "name": "Matemática Aplicada 3",
+    "isRequired": true,
+    "prerequisites": ["0112","0114"],
+    "isPassed": false,
+    "belongsTo": 0
+  },
+  {
+    "semester": 5,
+    "code": "0118",
+    "credits": 5,
+    "name": "Matemática Aplicada 1",
+    "isRequired": true,
+    "prerequisites": ["0112","0114"],
+    "isPassed": false,
+    "belongsTo": 0
+  },
+  {
+    "semester": 5,
+    "code": "0018",
+    "credits": 1,
+    "name": "Filosofía de la Ciencia",
+    "isRequired": false,
+    "prerequisites": ["0019"],
+    "isPassed": false,
+    "belongsTo": 0
+  },
+  {
+    "semester": 6,
+    "code": "0722",
+    "credits": 4,
+    "name": "Teoría de Sistemas 1",
+    "isRequired": true,
+    "prerequisites": ["0732","0772","0116"],
+    "isPassed": false,
+    "belongsTo": 2
+  },
+  {
+    "semester": 6,
+    "code": "0601",
+    "credits": 6,
+    "name": "Investigación de Operaciones 1",
+    "isRequired": true,
+    "prerequisites": ["0771","0732"],
+    "isPassed": false,
+    "belongsTo": 2
+  },
+  {
+    "semester": 6,
+    "code": "0014",
+    "credits": 3,
+    "name": "Economía",
+    "isRequired": true,
+    "prerequisites": ["0732"],
+    "isPassed": false,
+    "belongsTo": 2
+  },
+  {
+    "semester": 6,
+    "code": "0781",
+    "credits": 6,
+    "name": "Organización de Lenguajes y Compiladores 2",
+    "isRequired": true,
+    "prerequisites": ["0772","0777"],
+    "isPassed": false,
+    "belongsTo": 3
+  },
+  {
+    "semester": 6,
+    "code": "0778",
+    "credits": 5,
+    "name": "Arquitectura de Computadoras y Ensambladores 1",
+    "isRequired": true,
+    "prerequisites": ["0796","0964"],
+    "isPassed": false,
+    "belongsTo": 3
+  },
+  {
+    "semester": 6,
+    "code": "0778",
+    "credits": 5,
+    "name": "Manejo e Implementación de Archivos",
+    "isRequired": true,
+    "prerequisites": ["0772","0796"],
+    "isPassed": false,
+    "belongsTo": 1
+  },
+  {
+    "semester": 6,
+    "code": "0122",
+    "credits": 5,
+    "name": "Matemática Aplicada 4",
+    "isRequired": false,
+    "prerequisites": ["0118"],
+    "isPassed": false,
+    "belongsTo": 0
+  },
+  {
+    "semester": 6,
+    "code": "0120",
+    "credits": 5,
+    "name": "Matemática Aplicada 2",
+    "isRequired": false,
+    "prerequisites": ["0118"],
+    "isPassed": false,
+    "belongsTo": 0
+  },
+  {
+    "semester": 6,
+    "code": "0200",
+    "credits": 6,
+    "name": "Ingeniería Eléctrica 1",
+    "isRequired": false,
+    "prerequisites": ["0114","0152"],
+    "isPassed": false,
+    "belongsTo": 0
+  },
+  {
+    "semester": 7,
+    "code": "0724",
+    "credits": 4,
+    "name": "Teoría de Sistemas 2",
+    "isRequired": true,
+    "prerequisites": ["0601","0722"],
+    "isPassed": false,
+    "belongsTo": 2
+  },
+  {
+    "semester": 7,
+    "code": "0603",
+    "credits": 6,
+    "name": "Investigación de Operaciones 2",
+    "isRequired": true,
+    "prerequisites": ["0601"],
+    "isPassed": false,
+    "belongsTo": 2
+  },
+  {
+    "semester": 7,
+    "code": "0734",
+    "credits": 5,
+    "name": "Estadística 2",
+    "isRequired": false,
+    "prerequisites": ["0732"],
+    "isPassed": false,
+    "belongsTo": 2
+  },
+  {
+    "semester": 7,
+    "code": "0281",
+    "credits": 6,
+    "name": "Sistemas Operativos 1",
+    "isRequired": true,
+    "prerequisites": ["0778","0781"],
+    "isPassed": false,
+    "belongsTo": 3
+  },
+  {
+    "semester": 7,
+    "code": "0779",
+    "credits": 5,
+    "name": "Arquitectura de Computadoras y Ensambladores 2",
+    "isRequired": true,
+    "prerequisites": ["0778"],
+    "isPassed": false,
+    "belongsTo": 3
+  },
+  {
+    "semester": 7,
+    "code": "0970",
+    "credits": 5,
+    "name": "Redes de Computadora 1",
+    "isRequired": true,
+    "prerequisites": ["0773","0778"],
+    "isPassed": false,
+    "belongsTo": 3
+  },
+  {
+    "semester": 7,
+    "code": "0774",
+    "credits": 6,
+    "name": "Sistemas de Bases de Datos 1",
+    "isRequired": true,
+    "prerequisites": ["0773"],
+    "isPassed": false,
+    "belongsTo": 3
+  },
+  {
+    "semester": 7,
+    "code": "2036",
+    "credits": 0,
+    "name": "Prácticas Intermedias",
+    "isRequired": true,
+    "prerequisites": ["0773","0777","0778","2025"],
+    "isPassed": false,
+    "belongsTo": 0
+  },
+  {
+    "semester": 8,
+    "code": "0285",
+    "credits": 4,
+    "name": "Sistemas Operativos 2",
+    "isRequired": true,
+    "prerequisites": ["0281"],
+    "isPassed": false,
+    "belongsTo": 3
+  },
+  {
+    "semester": 8,
+    "code": "0975",
+    "credits": 6,
+    "name": "Redes de Computadora 2",
+    "isRequired": true,
+    "prerequisites": ["0970"],
+    "isPassed": false,
+    "belongsTo": 3
+  },
+  {
+    "semester": 8,
+    "code": "0775",
+    "credits": 7,
+    "name": "Sistemas de Bases de Datos 2",
+    "isRequired": true,
+    "prerequisites": ["0281","0774"],
+    "isPassed": false,
+    "belongsTo": 1
+  },
+  {
+    "semester": 8,
+    "code": "0283",
+    "credits": 6,
+    "name": "Análisis y Diseño de Sistemas 1",
+    "isRequired": true,
+    "prerequisites": ["0774"],
+    "isPassed": false,
+    "belongsTo": 1
+  },{
+    "semester": 8,
+    "code": "0797",
+    "credits": 5,
+    "name": "Seminario de Sistemas 1",
+    "isRequired": true,
+    "prerequisites": ["0281","0724","0774"],
+    "isPassed": false,
+    "belongsTo": 3
+  },
+  {
+    "semester": 8,
+    "code": "0700",
+    "credits": 4,
+    "name": "Ingeniería Económica 1",
+    "isRequired": false,
+    "prerequisites": ["0732"],
+    "isPassed": false,
+    "belongsTo": 0
+  },
+  {
+    "semester": 9,
+    "code": "0729",
+    "credits": 5,
+    "name": "Modelación y Simulación 1",
+    "isRequired": true,
+    "prerequisites": ["0603","0724"],
+    "isPassed": false,
+    "belongsTo": 2
+  },
+  {
+    "semester": 9,
+    "code": "0786",
+    "credits": 5,
+    "name": "Sistemas Organizacionales y Generenciales 1",
+    "isRequired": true,
+    "prerequisites": ["0283","0722"],
+    "isPassed": false,
+    "belongsTo": 2
+  },
+  {
+    "semester": 9,
+    "code": "0972",
+    "credits": 7,
+    "name": "Inteligencia Artificial 1",
+    "isRequired": true,
+    "prerequisites": ["0724","0775","0781"],
+    "isPassed": false,
+    "belongsTo": 3
+  },
+  {
+    "semester": 9,
+    "code": "0966",
+    "credits": 3,
+    "name": "Seguridad y Auditoría de Redes de Computadoras",
+    "isRequired": false,
+    "prerequisites": ["0975"],
+    "isPassed": false,
+    "belongsTo": 3
+  },
+  {
+    "semester": 9,
+    "code": "0785",
+    "credits": 7,
+    "name": "Análisis y Diseño de Sistemas 2",
+    "isRequired": true,
+    "prerequisites": ["0283"],
+    "isPassed": false,
+    "belongsTo": 1
+  },
+  {
+    "semester": 9,
+    "code": "0798",
+    "credits": 5,
+    "name": "Seminario de Sistemas 2",
+    "isRequired": true,
+    "prerequisites": ["0285","0775","0797"],
+    "isPassed": false,
+    "belongsTo": 1
+  },
+  {
+    "semester": 9,
+    "code": "0788",
+    "credits": 5,
+    "name": "Sistemas Aplicados 1",
+    "isRequired": false,
+    "prerequisites": ["0283"],
+    "isPassed": false,
+    "belongsTo": 1
+  },
+  {
+    "semester": 9,
+    "code": "0776",
+    "credits": 5,
+    "name": "Bases de Datos Avanzadas",
+    "isRequired": false,
+    "prerequisites": ["0775"],
+    "isPassed": false,
+    "belongsTo": 1
+  },
+  {
+    "semester": 9,
+    "code": "2009",
+    "credits": 0,
+    "name": "Prácticas Finales Ingeniería Ciencias y Sistemas",
+    "isRequired": true,
+    "prerequisites": ["0283","0285","0975","2036"],
+    "isPassed": false,
+    "belongsTo": 0
+  },
+  {
+    "semester": 10,
+    "code": "0720",
+    "credits": 6,
+    "name": "Modelación y Simulación 2",
+    "isRequired": true,
+    "prerequisites": ["0729"],
+    "isPassed": false,
+    "belongsTo": 2
+  },
+  {
+    "semester": 10,
+    "code": "0787",
+    "credits": 6,
+    "name": "Sistemas Organizacionales y Generenciales 2",
+    "isRequired": true,
+    "prerequisites": ["0786"],
+    "isPassed": false,
+    "belongsTo": 2
+  },
+  {
+    "semester": 10,
+    "code": "0790",
+    "credits": 6,
+    "name": "Emprendedores de Negocios Informáticos",
+    "isRequired": false,
+    "prerequisites": ["0786"],
+    "isPassed": false,
+    "belongsTo": 2
+  },
+  {
+    "semester": 10,
+    "code": "0968",
+    "credits": 5,
+    "name": "Inteligencia Artificial 2",
+    "isRequired": false,
+    "prerequisites": ["0972"],
+    "isPassed": false,
+    "belongsTo": 3
+  },
+  {
+    "semester": 10,
+    "code": "0974",
+    "credits": 3,
+    "name": "Redes de Nueva Generación",
+    "isRequired": false,
+    "prerequisites": ["0975"],
+    "isPassed": false,
+    "belongsTo": 3
+  },
+  {
+    "semester": 10,
+    "code": "0780",
+    "credits": 8,
+    "name": "Software Avanzado",
+    "isRequired": true,
+    "prerequisites": ["0785"],
+    "isPassed": false,
+    "belongsTo": 1
+  },
+  {
+    "semester": 10,
+    "code": "0789",
+    "credits": 5,
+    "name": "Sistemas Aplicados 2",
+    "isRequired": false,
+    "prerequisites": ["0785","0788"],
+    "isPassed": false,
+    "belongsTo": 1
+  },
+  {
+    "semester": 10,
+    "code": "0735",
+    "credits": 6,
+    "name": "Auditoria de Proyectos de Software",
+    "isRequired": false,
+    "prerequisites": ["0785"],
+    "isPassed": false,
+    "belongsTo": 1
+  },
+  {
+    "semester": 10,
+    "code": "7999",
+    "credits": 3,
+    "name": "Seminario de Investigación EPS Sistemas",
+    "isRequired": false,
+    "prerequisites": ["0785","0786","0798"],
+    "isPassed": false,
+    "belongsTo": 2
+  },
+  {
+    "semester": 10,
+    "code": "0799",
+    "credits": 3,
+    "name": "Seminario de Investigación",
+    "isRequired": true,
+    "prerequisites": ["0785","0786","0798"],
+    "isPassed": false,
+    "belongsTo": 2
+  }
+]
