@@ -3,7 +3,7 @@
     <Navbar />
     <main class="container mx-auto my-6">
       <div class="flex gap-x-5">
-        <div class="p-8 w-9/12 border border-gray-300">
+        <div class="p-8 xl:w-9/12 w-8/12 border border-gray-300">
           <div class="flex justify-center">
             <img src="/images/SOFTWARE.png" class="w-36 mr-5" alt="Imagen 1">
             <img src="/images/SISTEMAS.png" class="w-36 mr-5" alt="Imagen 2">
@@ -24,7 +24,7 @@
           </div>
         </div>
 
-        <MainRightCol v-if="courseData.length > 0" :course-data="courseData" class="p-8 w-3/12 border border-gray-300" />
+        <MainRightCol v-if="courseData.length > 0" :course-data="courseData" class="p-8 xl:w-3/12 w-4/12 border border-gray-300" />
         <div v-else class="pt-5 text-center">
           <div role="status">
             <div role="status">

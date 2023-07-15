@@ -8,32 +8,66 @@
         <li><span class="font-bold">Cursos obligatorios:</span></li>
         <li>
           <ul class="ml-4">
-            <li><span class="font-bold">- Ganados: </span> {{ passedCoreCourses.length + "/" + coreCourses.length + ": "}} <span class="text-fuchsia-800">{{ coreCourses.length - passedCoreCourses.length}}</span></li>
-            <li><span class="font-bold">- Créditos: </span> {{ getSumCreditsOfCoursesArr(passedCoreCourses) + "/" + getSumCreditsOfCoursesArr(coreCourses) + ": "}} <span class="text-fuchsia-800">{{ getSumCreditsOfCoursesArr(coreCourses) - getSumCreditsOfCoursesArr(passedCoreCourses)}}</span></li>
+            <li><span class="font-bold">- Ganados: </span> {{ passedCoreCourses.length + "/" + coreCourses.length + ": "
+            }}
+              <span class="text-fuchsia-800">{{ coreCourses.length - passedCoreCourses.length }}</span>
+            </li>
+            <li><span class="font-bold">- Créditos: </span> {{ getSumCreditsOfCoursesArr(passedCoreCourses) + "/" +
+              getSumCreditsOfCoursesArr(coreCourses) + ": " }} <span class="text-fuchsia-800">{{
+    getSumCreditsOfCoursesArr(coreCourses) - getSumCreditsOfCoursesArr(passedCoreCourses) }}</span></li>
           </ul>
+        </li>
+        <li>
+          <div class="flex justify-center my-3">
+            <CircularProgressBar
+              :percentage="(getSumCreditsOfCoursesArr(passedCoreCourses) / getSumCreditsOfCoursesArr(coreCourses)) * 100"
+              text="Progreso obligatorios" />
+          </div>
         </li>
         <li><span class="font-bold">Cursos no obligatorios:</span></li>
         <li>
           <ul class="ml-4">
-            <li><span class="font-bold">- Ganados: </span> {{ passedElectiveCourses.length + "/" + electiveCourses.length + ": "}} <span class="text-fuchsia-800">{{ electiveCourses.length - passedElectiveCourses.length}}</span></li>
-            <li><span class="font-bold">- Créditos: </span> {{ getSumCreditsOfCoursesArr(passedElectiveCourses) + "/" + Number(300 - getSumCreditsOfCoursesArr(coreCourses)) + " de " + getSumCreditsOfCoursesArr(electiveCourses) + ": "}} <span class="text-fuchsia-800">{{ Number(300 - getSumCreditsOfCoursesArr(coreCourses)) - getSumCreditsOfCoursesArr(passedElectiveCourses)}}</span></li>
+            <li><span class="font-bold">- Ganados: </span> {{ passedElectiveCourses.length + "/" + electiveCourses.length
+              + ": " }} <span class="text-fuchsia-800">{{ electiveCourses.length - passedElectiveCourses.length }}</span>
+            </li>
+            <li><span class="font-bold">- Créditos: </span> {{ getSumCreditsOfCoursesArr(passedElectiveCourses) + "/" +
+              Number(300 - getSumCreditsOfCoursesArr(coreCourses)) + " de " + getSumCreditsOfCoursesArr(electiveCourses) +
+              ": " }} <span class="text-fuchsia-800">{{ Number(300 - getSumCreditsOfCoursesArr(coreCourses)) -
+    getSumCreditsOfCoursesArr(passedElectiveCourses) }}</span></li>
           </ul>
+        </li>
+        <li>
+          <div class="flex justify-center my-3">
+            <CircularProgressBar
+              :percentage="(getSumCreditsOfCoursesArr(passedElectiveCourses) / Number(300 - getSumCreditsOfCoursesArr(coreCourses))) * 100"
+              text="Progreso no obligatorios" />
+          </div>
         </li>
         <li><span class="font-bold">Total:</span></li>
         <li>
           <ul class="ml-4">
-            <li><span class="font-bold">- Ganados: </span> {{ passedCourses.length + "/" + courseData.length + ": "}} <span class="text-fuchsia-800">{{ courseData.length - passedCourses.length}}</span></li>
-            <li><span class="font-bold">- Créditos: </span> {{ getSumCreditsOfCoursesArr(passedCourses) + "/300 de " + getSumCreditsOfCoursesArr(courseData) + ": "}} <span class="text-fuchsia-800">{{ 300 - getSumCreditsOfCoursesArr(passedCourses) }}</span></li>
+            <li><span class="font-bold">- Ganados: </span> {{ passedCourses.length + "/" + courseData.length + ": " }}
+              <span class="text-fuchsia-800">{{ courseData.length - passedCourses.length }}</span>
+            </li>
+            <li><span class="font-bold">- Créditos: </span> {{ getSumCreditsOfCoursesArr(passedCourses) + "/300 de " +
+              getSumCreditsOfCoursesArr(courseData) + ": " }} <span class="text-fuchsia-800">{{ 300 -
+    getSumCreditsOfCoursesArr(passedCourses) }}</span></li>
           </ul>
         </li>
+        <li>
+          <div class="flex justify-center my-3">
+            <CircularProgressBar :percentage="(getSumCreditsOfCoursesArr(passedCourses) / 300) * 100"
+              text="Total progreso" />
+          </div>
+        </li>
       </ul>
-    </div>
-    <div>
     </div>
   </div>
 </template>
 
 <script setup>
+import CircularProgressBar from './CircularProgressBar.vue';
+
 const props = defineProps({
   courseData: {
     type: Array,
