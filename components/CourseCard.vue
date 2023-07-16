@@ -1,13 +1,18 @@
-<style scoped>
+<style scoped lang="scss">
 .text-container {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* .course-card {
+.course-card {
   cursor: pointer;
-} */
+  transition: .1s all ease;
+
+  &:hover {
+    transform: scale(1.03);
+  }
+} 
 </style>
 
 <template>
@@ -43,6 +48,10 @@ const props = defineProps({
   courseData: {
     type: Object,
     required: true
+  },
+  type: {
+    type: String,
+    default: "normal" // Types: {normal,selector}
   }
 })
 
@@ -52,7 +61,6 @@ function getColorByBelongsTo(belTo, isBg) {
   } else {
     return belTo === 1 ? "#76933b" : (belTo === 2 ? "#31869a" : (belTo === 3 ? "#ffc000" : ""));
   }
-
 }
 
 </script>

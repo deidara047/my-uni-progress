@@ -7,5 +7,8 @@ export default defineNuxtConfig({
     },
     preconnect: true
   },
-  css: ["@/assets/css/main.scss"]
+  css: [
+    "@/assets/css/main.scss",
+    '@fortawesome/fontawesome-svg-core/styles.css'
+  ]
 })

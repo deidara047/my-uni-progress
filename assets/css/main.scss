@@ -23,4 +23,8 @@
   .r-card {
     @apply border px-4 py-3 border-gray-300 rounded-md;
   }
+
+  .r-card-paddingless {
+    @apply border border-gray-300 rounded-md;
+  }
 }
