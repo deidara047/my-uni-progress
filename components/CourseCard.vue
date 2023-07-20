@@ -5,18 +5,18 @@
   justify-content: center;
 }
 
-.course-card {
+.selector-course-card {
   cursor: pointer;
   transition: .1s all ease;
 
   &:hover {
     transform: scale(1.03);
   }
-} 
+}
 </style>
 
 <template>
-  <div class="course-card mb-4">
+  <div class="course-card mb-4" @click="onCourseClick" :class="{ 'selector-course-card': props.type === 'selector' }">
     <div v-if="props.courseData.isPassed" class="text-xs golden-background">
       <h3 class="text-white text-center font-medium text-with-border">Curso Ganado</h3>
     </div>
@@ -44,6 +44,12 @@
 </template>
 
 <script setup>
+const emit = defineEmits(['selected-course']);
+
+onMounted(() => {
+  // console.log({"mode": props.mode})
+});
+
 const props = defineProps({
   courseData: {
     type: Object,
@@ -51,9 +57,30 @@ const props = defineProps({
   },
   type: {
     type: String,
-    default: "normal" // Types: {normal,selector}
+    default: "normal" // Types: {normal,selector}; if selector, it can emit when it's clicked
+  },
+  /**
+   * Modes: {none, selected, direct-pre, direct-post, chain-pre, chain-post, others}
+   * - none: When no course is selected
+   * - selected: When this course specifically is selected
+   * - direct-pre: When this course is the direct prerequisite course of the clicked course, i.e. the course necessary to pass in order to have
+   *             the right to take it
+   * - direct-post: When the clicked course is a prerequisite of this course
+   * - chain-pre: When this and other courses are pre-requisites of the direct-pre courses
+   * - chain-post: When this and other courses are post-requisites of the direct-post courses
+   * - others: When a course is selected, but this course doesn't belong to any type of the mentioned aboved (except 'none' case)
+   * */
+  mode: {
+    type: String,
+    default: "none"
   }
 })
+
+function onCourseClick() {
+  if (props.type === "selector") {
+    emit('selected-course', { 'code': props.courseData.code })
+  }
+}
 
 function getColorByBelongsTo(belTo, isBg) {
   if (isBg === true) {
