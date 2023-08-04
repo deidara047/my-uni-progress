@@ -11,46 +11,30 @@
       </i></div>
     <hr class="mt-2 border-2 border-[#aeacac] mb-4" />
     <div class="course-container">
-      <CourseCard @selected-course="({ code }) => onSelectedCourse(code)" :type="typeCourseCards"
-        v-for="semData in props.semesterData" :mode="getCourseTypeById(semData.code)" :key="semData.semester"
-        :course-data="semData" />
+      <CourseCard @selected-course="({ code }) => onSelectedCourse(code)" :type="props.typeCourseCards"
+        v-for="semData in props.semesterData" :key="semData.code" :course-data="semData" :mode="semData.mode"/>
     </div>
   </div>
 </template>
 
 <script setup>
-const selectedCourse = ref(null); // DONE
-const typeCourseCards = "selector";
-const chainPreCourses = ref([]);
-const chainPostCourses = ref([]);
-const allCoursesData = inject("allCoursesData", []);
-/* I also use:
-  directPostCourses(): an array of post-courses
-  directPreCourses(): an array of pre-courses
-*/
-
-
-onUpdated(() => {
-  console.log("directPostCourses:")
-  console.log(directPostCourses())
-})
-
-onBeforeUpdate(() => {
-  if (selectedCourse.value) {
-    generateChainPostCourses();
-    generateChainPreCourses();
-  }
-});
 
 const props = defineProps({
   semesterData: {
     type: Array,
     required: true
+  },
+  typeCourseCards: {
+    type: String,
+    default: "none"
   }
 });
 
+const emit = defineEmits(["selected-course"]);
+
+
 function onSelectedCourse(code) {
-  selectedCourse.value = code;
+  emit('selected-course', { 'code': code });
 }
 
 function getNumOrdinName(num) {
@@ -88,103 +72,6 @@ function getNumOrdinName(num) {
     default:
       return "_undefined"
       break;
-  }
-}
-
-const directPostCourses = (() => {
-  let coursesArr = [];
-  if (selectedCourse.value != null) {
-    coursesArr = allCoursesData.filter((item) => item.prerequisites.includes(selectedCourse.value));
-  }
-  return coursesArr;
-});
-
-const directPreCourses = (() => {
-  let coursesArr = [];
-
-  if (selectedCourse.value != null) {
-    const courseData = allCoursesData.find((item) => item.code === selectedCourse.value);
-    courseData.prerequisites.forEach((prer) => {
-      coursesArr.push(allCoursesData.find((course) => course.code === prer));
-    });
-  }
-  return coursesArr;
-});
-
-function generateChainPostCourses() {
-  if (selectedCourse.value != null) {
-    chainPostCourses.value = [];
-    directPostCourses().forEach((course) => {
-      generateChainPostCoursesRec(course.code, true)
-    });
-  }
-}
-
-function generateChainPostCoursesRec(code, isFromFunction) {
-  const foundedCourse = allCoursesData.find((course) => course.code == code);
-  if (isFromFunction === false) {
-    chainPreCourses.value.push(foundedCourse);
-  }
-
-  const foundedPostCourses = [...allCoursesData.filter((item) => item.prerequisites.includes(code))];
-  if (foundedPostCourses.length > 0) {
-    foundedPostCourses.forEach((course) => {
-      generateChainPostCoursesRec(course.code, false);
-    });
-  } else {
-    return;
-  }
-}
-
-function generateChainPreCourses() {
-  if (selectedCourse.value != null) {
-    chainPreCourses.value = [];
-    directPreCourses().forEach((course) => {
-      generateChainPreCoursesRec(course.code, true);
-    });
-  }
-}
-
-function generateChainPreCoursesRec(code, isFromFunction) {
-  const foundedCourse = allCoursesData.find((course) => course.code === code);
-  if (isFromFunction === false) {
-    chainPreCourses.value.push(foundedCourse);
-  }
-
-  if (foundedCourse.prerequisites.length > 0) {
-    foundedCourse.prerequisites.forEach((prer) => {
-      generateChainPreCoursesRec(prer, false);
-    });
-  } else {
-    return;
-  }
-}
-
-function getCourseTypeById(code) {
-  if (selectedCourse.value != null) {
-    if (selectedCourse.value === code) {
-      return "selected";
-    }
-
-    if (directPreCourses().find((course) => course.code === code)) {
-      return "direct-pre"
-    }
-
-    if (directPostCourses().find((course) => course.code === code)) {
-      return "direct-post";
-    }
-
-    if (chainPreCourses.value.find((course) => course.code === code)) {
-      return "chain-pre"
-    }
-
-    if (chainPostCourses.value.find((course) => course.code === code)) {
-      return "chain-post"
-    }
-
-    return "others";
-  } else {
-    return "none";
   }
 }
 

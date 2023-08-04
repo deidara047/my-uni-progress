@@ -7,16 +7,22 @@
 
 .selector-course-card {
   cursor: pointer;
-  transition: .1s all ease;
+  transition: .1s transform ease;
 
   &:hover {
     transform: scale(1.03);
   }
 }
+
+.selected-course {
+  border-color: #ff9ff3;
+  border-width: 5px;
+  border-radius: 10px;
+}
 </style>
 
 <template>
-  <div class="course-card mb-4" @click="onCourseClick" :class="{ 'selector-course-card': props.type === 'selector' }">
+  <div class="course-card mb-4" @click="onCourseClick" :class="{ 'selector-course-card': props.type === 'selector', 'selected-course': props.mode === 'selected' }">
     <div v-if="props.courseData.isPassed" class="text-xs golden-background">
       <h3 class="text-white text-center font-medium text-with-border">Curso Ganado</h3>
     </div>
@@ -24,19 +30,19 @@
       <div class="course-colour border w-[12px]"
         :style="{ borderColor: getColorByBelongsTo(props.courseData.belongsTo, true), backgroundColor: getColorByBelongsTo(props.courseData.belongsTo, false) }">
       </div>
-      <div class="text-xs bg-[#fbbf8f] course-left-data ">
-        <div class="bg-[#f69745] p-[4px] course-code-div">{{ props.courseData.code }}</div>
+      <div class="text-xs course-left-data" :class="[getColorsByMode.color2.color, getColorsByMode.color2.textColor]">
+        <div class="p-[4px] course-code-div" :class="[getColorsByMode.color1.color, getColorsByMode.color1.textColor]">{{ props.courseData.code }}</div>
         <div class="bg-transparent text-center course-credits">{{ props.courseData.credits }}</div>
       </div>
       <div class="flex flex-grow">
-        <div class="course-name p-[8px] text-center bg-[#fdd3b4] flex-grow text-container">
+        <div class="course-name p-[8px] text-center flex-grow text-container" :class="[getColorsByMode.color3.color, getColorsByMode.color3.textColor]">
           <p>{{ props.courseData.name }}</p>
         </div>
-        <div class="course-is-required-div bg-[#fdd3b4]">
+        <div class="course-is-required-div" :class="[getColorsByMode.color3.color]">
           <div class="dot-div text-2xl pr-[4px] font-bold">{{ props.courseData.isRequired ? "*" : "" }}</div>
         </div>
       </div>
-      <div class="course-requirements-div p-[4px] min-w-[37px] bg-[#f69745]">
+      <div class="course-requirements-div p-[4px] min-w-[37px]" :class="[getColorsByMode.color1.color, getColorsByMode.color1.textColor]">
         <p v-for="req in props.courseData.prerequisites">{{ req }}</p>
       </div>
     </div>
@@ -61,7 +67,7 @@ const props = defineProps({
   },
   type: {
     type: String,
-    default: "normal" // Types: {normal,selector}; if selector, it can emit when it's clicked
+    default: "normal" // Types: {normal,selector}; if type is selector, it can emit when it's clicked
   },
   /**
    * Modes: {none, selected, direct-pre, direct-post, chain-pre, chain-post, others}
@@ -85,6 +91,53 @@ function onCourseClick() {
     emit('selected-course', { 'code': props.courseData.code })
   }
 }
+
+const getColorsByMode = computed(() => {
+  switch (props.mode) {
+    case "direct-pre":
+      return {
+        color1: { color: "bg-[#27ae60]", textColor: "text-white" },
+        color2: { color: "bg-[#16a085]", textColor: "text-black" },
+        color3: { color: "bg-[#2ecc71]", textColor: "text-black" },
+      }
+      break;
+    case "direct-post":
+      return {
+        color1: { color: "bg-[#EE2F33]", textColor: "text-white" },
+        color2: { color: "bg-[#F27B7E]", textColor: "text-black" },
+        color3: { color: "bg-[#ff7979]", textColor: "text-white" },
+      }
+      break;
+    case "chain-pre":
+      return {
+        color1: { color: "bg-[#9CCB89]", textColor: "text-white" },
+        color2: { color: "bg-[#D2F4CB]", textColor: "text-black" },
+        color3: { color: "bg-[#F1FFED]", textColor: "text-black" },
+      }
+      break;
+    case "chain-post":
+      return {
+        color1: { color: "bg-[#FD6C6C]", textColor: "text-white" },
+        color2: { color: "bg-[#FFC5C7]", textColor: "text-black" },
+        color3: { color: "bg-[#FFF3F6]", textColor: "text-black" },
+      }
+      break;
+    case "others":
+      return {
+        color1: { color: "bg-[#c7ecee]", textColor: "text-black" },
+        color2: { color: "bg-[#dff9fb]", textColor: "text-black" },
+        color3: { color: "bg-[#F6FAFF]", textColor: "text-black" },
+      }
+      break;
+    default:
+      return {
+        color1: { color: "bg-[#f69745]", textColor: "text-black" },
+        color2: { color: "bg-[#fbbf8f]", textColor: "text-black" },
+        color3: { color: "bg-[#fdd3b4]", textColor: "text-black" },
+      }
+      break;
+  }
+});
 
 function getColorByBelongsTo(belTo, isBg) {
   if (isBg === true) {

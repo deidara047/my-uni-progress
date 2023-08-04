@@ -13,18 +13,14 @@
             <h2 class="text-2xl font-semibold">Cursos</h2>
             <hr class="border" />
           </div>
-          <div class="flex flex-wrap justify-between mt-6 gap-4">
-            <!-- The number of the range is being set statically, but in the future if necessary, this process will be automated -->
-            <template v-if="courseData.length > 0">
-              <template v-for="ind in 10" :key="ind">
-                <SemesterCard :semester-data="getSemesterDataByIndex(ind)" />
-              </template>
+          <div class="mt-6">
+            <template v-if="coursesData.length > 0">
+              <SemestersContainer :courses-data="coursesData" />
             </template>
-
           </div>
         </div>
 
-        <MainRightCol v-if="courseData.length > 0" :course-data="courseData" class="p-8 xl:w-3/12 w-4/12 border border-gray-300" />
+        <MainRightCol v-if="coursesData.length > 0" :course-data="coursesData" class="p-8 xl:w-3/12 w-4/12 border border-gray-300" />
         <div v-else class="pt-5 text-center">
           <div role="status">
             <div role="status">
@@ -51,19 +47,11 @@
 import data from "@/assets/json/coursesData.json";
 import { onMounted, ref, reactive, computed, watchEffect } from 'vue';
 
-const courseData = reactive([]);
-provide("allCoursesData", courseData);
+const coursesData = reactive([]);
 
 onMounted(() => {
-  courseData.push(...data);
+  coursesData.push(...data);
 });
-
-
-//watchEffect()
-
-function getSemesterDataByIndex(ind) {
-  return [...courseData.filter(elem => elem.semester === ind)];
-}
 
 useHead({
   title: "Cursos de Ingeniería en Sistemas en la USAC"
