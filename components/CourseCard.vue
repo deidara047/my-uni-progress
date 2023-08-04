@@ -50,6 +50,10 @@ onMounted(() => {
   // console.log({"mode": props.mode})
 });
 
+onUpdated(() => {
+  // console.log({"mode": props.mode})
+});
+
 const props = defineProps({
   courseData: {
     type: Object,

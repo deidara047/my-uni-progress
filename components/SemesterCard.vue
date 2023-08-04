@@ -19,10 +19,21 @@
 </template>
 
 <script setup>
-const selectedCourse = ref(null);
+const selectedCourse = ref(null); // DONE
 const typeCourseCards = "selector";
 const chainPreCourses = ref([]);
 const chainPostCourses = ref([]);
+const allCoursesData = inject("allCoursesData", []);
+/* I also use:
+  directPostCourses(): an array of post-courses
+  directPreCourses(): an array of pre-courses
+*/
+
+
+onUpdated(() => {
+  console.log("directPostCourses:")
+  console.log(directPostCourses())
+})
 
 onBeforeUpdate(() => {
   if (selectedCourse.value) {
@@ -80,21 +91,21 @@ function getNumOrdinName(num) {
   }
 }
 
-const directPostCourses = computed(() => {
+const directPostCourses = (() => {
   let coursesArr = [];
   if (selectedCourse.value != null) {
-    coursesArr.concat(props.semesterData.filter((item) => item.prerequisites.includes(selectedCourse.value)));
+    coursesArr = allCoursesData.filter((item) => item.prerequisites.includes(selectedCourse.value));
   }
   return coursesArr;
 });
 
-const directPreCourses = computed(() => {
+const directPreCourses = (() => {
   let coursesArr = [];
 
   if (selectedCourse.value != null) {
-    const courseData = props.semesterData.find((item) => item.code === selectedCourse.value);
+    const courseData = allCoursesData.find((item) => item.code === selectedCourse.value);
     courseData.prerequisites.forEach((prer) => {
-      coursesArr.push(props.semesterData.find((course) => course.code == prer));
+      coursesArr.push(allCoursesData.find((course) => course.code === prer));
     });
   }
   return coursesArr;
@@ -103,19 +114,19 @@ const directPreCourses = computed(() => {
 function generateChainPostCourses() {
   if (selectedCourse.value != null) {
     chainPostCourses.value = [];
-    directPostCourses.value.forEach((course) => {
-      generateChainPostCoursesRec(course, true)
+    directPostCourses().forEach((course) => {
+      generateChainPostCoursesRec(course.code, true)
     });
   }
 }
 
 function generateChainPostCoursesRec(code, isFromFunction) {
-  const foundedCourse = props.semesterData.find((course) => course.code == code);
+  const foundedCourse = allCoursesData.find((course) => course.code == code);
   if (isFromFunction === false) {
     chainPreCourses.value.push(foundedCourse);
   }
 
-  const foundedPostCourses = [...props.semesterData.filter((item) => item.prerequisites.includes(code))];
+  const foundedPostCourses = [...allCoursesData.filter((item) => item.prerequisites.includes(code))];
   if (foundedPostCourses.length > 0) {
     foundedPostCourses.forEach((course) => {
       generateChainPostCoursesRec(course.code, false);
@@ -128,21 +139,21 @@ function generateChainPostCoursesRec(code, isFromFunction) {
 function generateChainPreCourses() {
   if (selectedCourse.value != null) {
     chainPreCourses.value = [];
-    directPreCourses.value.forEach((course) => {
+    directPreCourses().forEach((course) => {
       generateChainPreCoursesRec(course.code, true);
     });
   }
 }
 
 function generateChainPreCoursesRec(code, isFromFunction) {
-  const foundedCourse = props.semesterData.find((course) => course.code == code);
+  const foundedCourse = allCoursesData.find((course) => course.code === code);
   if (isFromFunction === false) {
     chainPreCourses.value.push(foundedCourse);
   }
 
   if (foundedCourse.prerequisites.length > 0) {
     foundedCourse.prerequisites.forEach((prer) => {
-      generateChainPreCoursesRec(prer.code, false);
+      generateChainPreCoursesRec(prer, false);
     });
   } else {
     return;
@@ -155,11 +166,11 @@ function getCourseTypeById(code) {
       return "selected";
     }
 
-    if (directPreCourses.value.find((course) => course.code === code)) {
+    if (directPreCourses().find((course) => course.code === code)) {
       return "direct-pre"
     }
 
-    if (directPostCourses.value.find((course) => course.code === code)) {
+    if (directPostCourses().find((course) => course.code === code)) {
       return "direct-post";
     }
 

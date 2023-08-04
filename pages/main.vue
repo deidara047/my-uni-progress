@@ -52,6 +52,7 @@ import data from "@/assets/json/coursesData.json";
 import { onMounted, ref, reactive, computed, watchEffect } from 'vue';
 
 const courseData = reactive([]);
+provide("allCoursesData", courseData);
 
 onMounted(() => {
   courseData.push(...data);
