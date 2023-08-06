@@ -1,9 +1,44 @@
+<style scoped>
+.custom-container {
+  width: 100%;
+}
+@media (min-width: 640px) {
+  .custom-container {
+    max-width: 640px;
+  }
+}
+@media (min-width: 768px) {
+  .custom-container {
+    max-width: 768px;
+  }
+}
+@media (min-width: 1024px) {
+  .custom-container {
+    max-width: 1024px;
+  }
+}
+@media (min-width: 1280px) {
+  .custom-container {
+    max-width: 1280px;
+  }
+}
+@media (min-width: 1536px) {
+  .custom-container {
+    max-width: 1536px;
+  }
+}
+@media (min-width: 1866px) {
+  .custom-container {
+    max-width: 1866px;
+  }
+}
+</style>
+
 <template>
   <div>
-    <Navbar />
-    <main class="container mx-auto my-6">
+    <main class="custom-container mx-auto my-6">
       <div class="flex gap-x-5">
-        <div class="p-8 xl:w-9/12 w-8/12 border border-gray-300">
+        <div class="p-8 border border-gray-300" :class="columnsWidths.left">
           <div class="flex justify-center">
             <img src="/images/SOFTWARE.png" class="w-36 mr-5" alt="Imagen 1">
             <img src="/images/SISTEMAS.png" class="w-36 mr-5" alt="Imagen 2">
@@ -20,7 +55,7 @@
           </div>
         </div>
 
-        <MainRightCol v-if="coursesData.length > 0" :course-data="coursesData" class="p-8 xl:w-3/12 w-4/12 border border-gray-300" />
+        <MainRightCol @right-button-clicked="() => rightColumnOpened = !rightColumnOpened" v-if="coursesData.length > 0" :course-data="coursesData" class="border border-gray-300 h-fit" :class="columnsWidths.right" />
         <div v-else class="pt-5 text-center">
           <div role="status">
             <div role="status">
@@ -46,6 +81,16 @@
 <script setup>
 import data from "@/assets/json/coursesData.json";
 import { onMounted, ref, reactive, computed, watchEffect } from 'vue';
+
+const rightColumnOpened = ref(true);
+
+const columnsWidths = computed(() => {
+  if(rightColumnOpened.value) {
+    return { left: ["xl:w-9/12","w-8/12"], right: ["xl:w-3/12","w-4/12", "p-7"] }
+  } else {
+    return { left: ["w-full"], right: ["px-4 py-7"] }
+  }
+})
 
 const coursesData = reactive([]);
 

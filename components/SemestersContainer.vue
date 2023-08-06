@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-wrap justify-between gap-4">
+  <div class="flex flex-wrap justify-center gap-4">
     <!-- The number of the range is being set statically, but in the future if necessary, this process will be automated -->
     <template v-for="ind in 10" :key="ind">
       <SemesterCard @selected-course="({ code }) => onSelectedCourse(code)" type-course-cards="selector" :semester-data="getSemesterDataByIndex(ind)" />

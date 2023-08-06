@@ -1,5 +1,5 @@
 <template>
-  <div class="py-4 px-3 border-2 w-[21rem] border-[#f8a864]">
+  <div class="py-4 px-3 border-2 w-[20rem] border-[#f8a864]">
     <div>
       <h1 class="font-[Roboto] text-2xl font-semibold"><span>{{ props.semesterData[0].semester }}</span> | <span>{{
         getNumOrdinName(props.semesterData[0].semester) }}
