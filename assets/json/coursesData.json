@@ -305,7 +305,7 @@
     "prerequisites": ["0771","0796","0962"],
     "isPassed": false,
     "belongsTo": 3,
-    "alongWith": "P"
+    "alongWith": "L"
   },
   {
     "semester": 5,

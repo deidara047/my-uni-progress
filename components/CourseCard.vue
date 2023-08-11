@@ -15,14 +15,13 @@
 }
 
 .selected-course {
-  border-color: #ff9ff3;
-  border-width: 5px;
-  border-radius: 10px;
+  box-shadow: 0 0 6px 4px #ff9ff3;
 }
 </style>
 
 <template>
-  <div class="course-card mb-4" @click="onCourseClick" :class="{ 'selector-course-card': props.type === 'selector', 'selected-course': props.mode === 'selected' }">
+  <div class="course-card mb-4" @click="onCourseClick"
+    :class="{ 'selector-course-card': props.type === 'selector', 'selected-course': props.mode === 'selected' }">
     <div v-if="props.courseData.isPassed" class="text-xs golden-background">
       <h3 class="text-white text-center font-medium text-with-border">Curso Ganado</h3>
     </div>
@@ -31,18 +30,31 @@
         :style="{ borderColor: getColorByBelongsTo(props.courseData.belongsTo, true), backgroundColor: getColorByBelongsTo(props.courseData.belongsTo, false) }">
       </div>
       <div class="text-xs course-left-data" :class="[getColorsByMode.color2.color, getColorsByMode.color2.textColor]">
-        <div class="p-[4px] course-code-div" :class="[getColorsByMode.color1.color, getColorsByMode.color1.textColor]">{{ props.courseData.code }}</div>
+        <div class="p-[4px] course-code-div" :class="[getColorsByMode.color1.color, getColorsByMode.color1.textColor]">{{
+          props.courseData.code }}</div>
         <div class="bg-transparent text-center course-credits">{{ props.courseData.credits }}</div>
       </div>
       <div class="flex flex-grow">
-        <div class="course-name p-[8px] text-center flex-grow text-container" :class="[getColorsByMode.color3.color, getColorsByMode.color3.textColor]">
+        <div class="course-name p-[8px] text-center flex-grow text-container"
+          :class="[getColorsByMode.color3.color, getColorsByMode.color3.textColor]">
           <p>{{ props.courseData.name }}</p>
         </div>
         <div class="course-is-required-div" :class="[getColorsByMode.color3.color]">
-          <div class="dot-div text-2xl pr-[4px] font-bold">{{ props.courseData.isRequired ? "*" : "" }}</div>
+          <div class="dot-div text-2xl pr-[4px] font-bold">{{ props.courseData.isRequired ? "*" : "" }}<div
+              v-if="props.courseData.alongWith" 
+              class="text-xs p-1 rounded-md text-white my-1"
+              :class="{
+                'bg-[#4B81D5]': props.courseData.alongWith === 'L',
+                'bg-[#F1556C]': props.courseData.alongWith === 'P',
+                'bg-[#c0392b]': props.courseData.alongWith === 'X'
+                }"
+              >{{ props.courseData.alongWith }}
+            </div>
+          </div>
         </div>
       </div>
-      <div class="course-requirements-div p-[4px] min-w-[37px]" :class="[getColorsByMode.color1.color, getColorsByMode.color1.textColor]">
+      <div class="course-requirements-div p-[4px] min-w-[37px]"
+        :class="[getColorsByMode.color1.color, getColorsByMode.color1.textColor]">
         <p v-for="req in props.courseData.prerequisites">{{ req }}</p>
       </div>
     </div>
