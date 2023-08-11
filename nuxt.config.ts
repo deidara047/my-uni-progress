@@ -3,7 +3,8 @@ export default defineNuxtConfig({
   modules: ['@nuxtjs/tailwindcss', '@nuxtjs/google-fonts'],
   googleFonts: {
     families: {
-      Roboto: true
+      Roboto: true,
+      Lato: true
     },
     preconnect: true
   },

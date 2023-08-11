@@ -30,10 +30,6 @@ const props = defineProps({
   }
 });
 
-onMounted(() => {
-  console.log(props.semesterData)
-});
-
 const emit = defineEmits(["selected-course"]);
 
 
