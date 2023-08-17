@@ -11,16 +11,16 @@
           :icon="['fas', (isThisColumnOpened ? 'xmark': 'align-right')]" size="sm" /></button>
     </div>
     <div v-show="isThisColumnOpened">
-      <h1 class="text-3xl mb-2 font-bold">Estadísticas</h1>
+      <h1 class="mb-2" :class="{'text-3xl font-bold': pageThatUsesThisComponent === 'MyIndex', 'text-2xl font-semibold': pageThatUsesThisComponent === 'MyRoute'}">Estadísticas</h1>
       <hr class="border" />
       <div class="mt-4 r-card-paddingless">
-        <div @click="toggleCollapse" class="cursor-pointer px-4 py-3 flex justify-between">
-          <h2 style="user-select: none;" class="text-2xl font-bold">Progreso</h2>
+        <div @click="toggleCollapse" class="cursor-pointer px-4 py-3 flex justify-between" :class="{'min-w-[266px]': pageThatUsesThisComponent === 'MyRoute'}">
+          <h2 style="user-select: none;" class="font-bold" :class="{'text-2xl': pageThatUsesThisComponent === 'MyIndex', 'text-xl': pageThatUsesThisComponent === 'MyRoute'}">Progreso</h2>
           <font-awesome-icon v-if="!isOpen" icon="fa-solid fa-chevron-down" class="mt-2" />
           <font-awesome-icon v-else icon="fa-solid fa-chevron-up" class="mt-2" />
         </div>
-        <div class="content overflow-hidden"
-          :class="{ 'max-h-0': !isOpen, 'max-h-fit': isOpen, 'px-4': isOpen, 'py-3': isOpen }">
+        <div class="content overflow-hidden" v-show="isOpen"
+          :class="{ 'max-h-fit': isOpen, 'px-4': isOpen, 'py-3': isOpen }">
           <ul class="list-none list-inside">
             <li><span class="font-bold">Cursos obligatorios:</span></li>
             <li>
@@ -98,6 +98,10 @@ const props = defineProps({
   courseData: {
     type: Array,
     required: true
+  },
+  pageThatUsesThisComponent: {
+    type: String,
+    default: "Index"
   }
 });
 

@@ -40,15 +40,13 @@
           <p>{{ props.courseData.name }}</p>
         </div>
         <div class="course-is-required-div" :class="[getColorsByMode.color3.color]">
-          <div class="dot-div text-2xl pr-[4px] font-bold">{{ props.courseData.isRequired ? "*" : "" }}<div
-              v-if="props.courseData.alongWith" 
-              class="text-xs p-1 rounded-md text-white my-1"
-              :class="{
-                'bg-[#4B81D5]': props.courseData.alongWith === 'L',
-                'bg-[#F1556C]': props.courseData.alongWith === 'P',
-                'bg-[#c0392b]': props.courseData.alongWith === 'X'
-                }"
-              >{{ props.courseData.alongWith }}
+          <div class="dot-div text-2xl pr-[4px] font-bold">
+            {{ props.courseData.isRequired ? "*" : "" }}
+            <div v-if="props.courseData.alongWith" class="text-xs p-1 rounded-md text-white my-1" :class="{
+              'bg-[#4B81D5]': props.courseData.alongWith === 'L',
+              'bg-[#F1556C]': props.courseData.alongWith === 'P',
+              'bg-[#c0392b]': props.courseData.alongWith === 'X'
+            }">{{ props.courseData.alongWith }}
             </div>
           </div>
         </div>

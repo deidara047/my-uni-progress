@@ -1,9 +1,64 @@
 <template>
-  <div class="flex flex-wrap justify-center gap-4">
-    <!-- The number of the range is being set statically, but in the future if necessary, this process will be automated -->
-    <template v-for="ind in 10" :key="ind">
-      <SemesterCard @selected-course="({ code }) => onSelectedCourse(code)" type-course-cards="selector" :semester-data="getSemesterDataByIndex(ind)" />
-    </template>
+  <div>
+    <hr class="mb-2" />
+    <div>
+      <div>
+        <h3 class="font-bold text-lg mb-1">Al darle click a algún curso:</h3>
+        <div class="flex flex-wrap gap-4">
+          <div class="flex">
+            <div class="p-2 bg-[#f69745] rounded-full w-1 h-1"></div>
+            <p class="translate-x-1 -translate-y-1.5">Seleccionado</p>
+          </div>
+          <div class="flex">
+            <div class="p-2 bg-[#27ae60] rounded-full w-1 h-1"></div>
+            <p class="translate-x-1 -translate-y-1.5">Prerrequisito directo</p>
+          </div>
+          <div class="flex">
+            <div class="p-2 bg-[#9CCB89] rounded-full w-1 h-1"></div>
+            <p class="translate-x-1 -translate-y-1.5">Prerrequisito de algún prerrequisito directo</p>
+          </div>
+          <div class="flex">
+            <div class="p-2 bg-[#EE2F33] rounded-full w-1 h-1"></div>
+            <p class="translate-x-1 -translate-y-1.5">Post requisito</p>
+          </div>
+          <div class="flex">
+            <div class="p-2 bg-[#c7ecee] rounded-full w-1 h-1"></div>
+            <p class="translate-x-1 -translate-y-1.5">No pertenece a ninguno</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 class="font-bold text-lg">El curso lleva:</h3>
+        <div class="flex gap-4">
+          <div class="flex">
+            <div class="text-xs p-1 rounded-md w-fit px-1.5 font-bold text-white my-1 bg-[#4B81D5]">
+              L
+            </div>
+            <p class="translate-y-1 translate-x-1"> - Laboratorio</p>
+          </div>
+          <div class="flex">
+            <div class="text-xs p-1 rounded-md w-fit px-1.5 font-bold text-white my-1 bg-[#F1556C]">
+              P
+            </div>
+            <p class="translate-y-1 translate-x-1"> - Práctica</p>
+          </div>
+          <div class="flex">
+            <div class="text-xs p-1 rounded-md w-fit px-1.5 font-bold text-white my-1 bg-[#c0392b]">
+              X
+            </div>
+            <p class="translate-y-1 translate-x-1"> - No está disponible (temporalmente)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr class="mt-2" />
+    <div class="flex mt-5 flex-wrap justify-around gap-4">
+      <!-- The number of the range is being set statically, but in the future if necessary, this process will be automated -->
+      <template v-for="ind in 10" :key="ind">
+        <SemesterCard @selected-course="({ code }) => onSelectedCourse(code)" type-course-cards="selector"
+          :semester-data="getSemesterDataByIndex(ind)" />
+      </template>
+    </div>
   </div>
 </template>
 
@@ -44,7 +99,7 @@ onBeforeUpdate(() => {
 });
 
 function onSelectedCourse(code) {
-  if(selectedCourse.value === code) {
+  if (selectedCourse.value === code) {
     selectedCourse.value = null;
   } else {
     selectedCourse.value = code;

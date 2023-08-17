@@ -48,7 +48,7 @@
             <h2 class="text-2xl font-semibold">Cursos</h2>
             <hr class="border" />
           </div>
-          <div class="mt-6">
+          <div class="mt-3">
             <template v-if="coursesData.length > 0">
               <SemestersContainer :courses-data="coursesData" />
             </template>
