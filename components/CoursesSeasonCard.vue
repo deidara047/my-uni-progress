@@ -13,7 +13,7 @@
     <div class="text-center">
       <h2 class="font-bold text-2xl font-[Lato]">Primer Semestre 2022</h2>
     </div>
-    <div class="p-4 mt-3 shadow-lg rounded-xl course-season-card">
+    <div class="p-4 mt-5 shadow-lg rounded-xl course-season-card">
       <div class="flex justify-end">
         <button class="text-red-600 hover:text-red-400 text-lg">X</button>
       </div>
@@ -22,6 +22,8 @@
         <p class="font-semibold">35 Créditos</p>
       </div>
       <div class="mt-3">
+        <div class="h-[40px] w-[300px] bg-white mb-3"></div>
+        <div class="h-[40px] w-[300px] bg-white mb-3"></div>
         <div class="h-[40px] w-[300px] bg-white mb-3"></div>
         <div class="h-[40px] w-[300px] bg-white flex justify-center items-center"><font-awesome-icon :icon="['fas', 'circle-plus']" size="xl" style="color: #e8eaecb9;" /></div>
       </div>

@@ -6,30 +6,34 @@
 
 .swiper-slide {
   font-size: 18px;
-  background: #fff;
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid red
 }
-
-.mySwiper {
-  width: 600px;
-}
-
 </style>
 
 <template>
-  <div>
-    <!--CoursesSeasonCard /-->
-    <swiper :navigation="true" :modules="modules" class="mySwiper">
-      <swiper-slide><CoursesSeasonCard /> </swiper-slide>
-      <swiper-slide><CoursesSeasonCard /> </swiper-slide>
-    </swiper>
-  </div>
+  <swiper :navigation="true" :modules="modules" class="mySwiper">
+    <swiper-slide>
+      <CoursesSeasonCard />
+    </swiper-slide>
+    <swiper-slide>
+      <CoursesSeasonCard />
+    </swiper-slide>
+    <swiper-slide>
+      <CoursesSeasonCard />
+    </swiper-slide>
+    <swiper-slide>
+      <CoursesSeasonCard />
+    </swiper-slide>
+  </swiper>
 </template>
 
 <script>
+/* Alright, I didn't manage to set the width 100% of its parent for some reason, so I had to set it by myself
+  So far, I've set all the "lengths" in my-route, so take a look over there to see what I did
+*/
+
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -42,7 +46,7 @@ export default {
   },
   setup() {
     return {
-      modules: [Navigation],
+      modules: [Navigation]
     };
   },
 };

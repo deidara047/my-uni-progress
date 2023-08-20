@@ -2,6 +2,27 @@
 .content {
   transition: max-height 0.2s ease-out;
 }
+
+.progress-info {
+  max-height: 400px;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 7px; /* Ancho del scrollbar */
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #ccc; /* Color del thumb */
+    border-radius: 5px; /* Bordes redondeados del thumb */
+    transition: .2s ease all;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #aaa; /* Color del thumb */
+    border-radius: 5px; /* Bordes redondeados del thumb */
+  }
+}
 </style>
 
 <template>
@@ -14,13 +35,13 @@
       <h1 class="mb-2" :class="{'text-3xl font-bold': pageThatUsesThisComponent === 'MyIndex', 'text-2xl font-semibold': pageThatUsesThisComponent === 'MyRoute'}">Estadísticas</h1>
       <hr class="border" />
       <div class="mt-4 r-card-paddingless">
-        <div @click="toggleCollapse" class="cursor-pointer px-4 py-3 flex justify-between" :class="{'min-w-[266px]': pageThatUsesThisComponent === 'MyRoute'}">
+        <div @click="toggleCollapse" class="cursor-pointer px-4 py-3 flex justify-between" :class="{'min-w-[274px]': pageThatUsesThisComponent === 'MyRoute'}">
           <h2 style="user-select: none;" class="font-bold" :class="{'text-2xl': pageThatUsesThisComponent === 'MyIndex', 'text-xl': pageThatUsesThisComponent === 'MyRoute'}">Progreso</h2>
-          <font-awesome-icon v-if="!isOpen" icon="fa-solid fa-chevron-down" class="mt-2" />
+          <font-awesome-icon v-if="!isProgresoSectionOpened" icon="fa-solid fa-chevron-down" class="mt-2" />
           <font-awesome-icon v-else icon="fa-solid fa-chevron-up" class="mt-2" />
         </div>
-        <div class="content overflow-hidden" v-show="isOpen"
-          :class="{ 'max-h-fit': isOpen, 'px-4': isOpen, 'py-3': isOpen }">
+        <div class="content" v-show="isProgresoSectionOpened"
+          :class="{ 'max-h-fit': isProgresoSectionOpened, 'px-4': isProgresoSectionOpened, 'py-3': isProgresoSectionOpened,'progress-info': pageThatUsesThisComponent === 'MyRoute' }">
           <ul class="list-none list-inside">
             <li><span class="font-bold">Cursos obligatorios:</span></li>
             <li>
@@ -92,7 +113,7 @@ import CircularProgressBar from './CircularProgressBar.vue';
 
 const isThisColumnOpened = ref(true);
 
-const isOpen = ref(true);
+const isProgresoSectionOpened = ref(true);
 
 const props = defineProps({
   courseData: {
@@ -101,14 +122,22 @@ const props = defineProps({
   },
   pageThatUsesThisComponent: {
     type: String,
-    default: "Index"
+    default: "MyIndex"
+  },
+  isProgresoSectionOpened: {
+    type: Boolean,
+    default: true
   }
+});
+
+onMounted(() => {
+  isProgresoSectionOpened.value = props.isProgresoSectionOpened;
 });
 
 const emit = defineEmits(["right-button-clicked"])
 
 function toggleCollapse() {
-  isOpen.value = !isOpen.value
+  isProgresoSectionOpened.value = !isProgresoSectionOpened.value
 }
 
 const coreCourses = computed(() => {

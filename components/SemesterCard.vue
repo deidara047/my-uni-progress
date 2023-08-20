@@ -1,18 +1,26 @@
 <template>
   <div class="py-4 px-3 border-2 w-[20rem] border-[#f8a864]">
     <div>
-      <h1 class="font-[Roboto] text-2xl font-semibold"><span>{{ props.semesterData[0].semester }}</span> | <span>{{
-        getNumOrdinName(props.semesterData[0].semester) }}
-          SEMESTRE</span></h1>
+      <h1 class="font-[Roboto] text-2xl font-semibold">
+        <div v-if="!props.isSearching">
+          <span>{{ props.semesterData[0].semester }}</span> | <span>{{
+            getNumOrdinName(props.semesterData[0].semester) }}
+            SEMESTRE</span>
+        </div>
+        <span v-else>BUSCANDO CURSO...</span>
+      </h1>
     </div>
-    <div><i class="text-sm text-slate-700">
+    <div v-if="!props.isSearching"><i class="text-sm text-slate-700">
         <p>- Total: ({{ semesterData.length }} cursos: {{ getSumCreditsOfCoursesArr(semesterData) }} cdts)</p>
         <p>- Ganado: ({{ passedCourses.length }} cursos: {{ getSumCreditsOfCoursesArr(passedCourses) }} cdts)</p>
       </i></div>
     <hr class="mt-2 border-2 border-[#aeacac] mb-4" />
     <div class="course-container">
-      <CourseCard @selected-course="({ code }) => onSelectedCourse(code)" :type="props.typeCourseCards"
-        v-for="semData in props.semesterData" :key="semData.code" :course-data="semData" :mode="semData.mode"/>
+      <template v-if="props.semesterData.length > 0">
+        <CourseCard @selected-course="({ code }) => onSelectedCourse(code)" :type="props.typeCourseCards"
+        v-for="semData in props.semesterData" :key="semData.code" :course-data="semData" :mode="semData.mode" />
+      </template>
+      <div v-else>No se encontró nada</div>
     </div>
   </div>
 </template>
@@ -27,6 +35,11 @@ const props = defineProps({
   typeCourseCards: {
     type: String,
     default: "none"
+  },
+  // If my-route route is searching, this is going to be true
+  isSearching: {
+    type: Boolean,
+    default: false
   }
 });
 
