@@ -1,5 +1,5 @@
 <template>
-  <div class="py-4 px-3 border-2 w-[20rem] border-[#f8a864]">
+  <div class="py-4 px-3 border-2 w-[20rem] h-fit border-[#f8a864]">
     <div>
       <h1 class="font-[Roboto] text-2xl font-semibold">
         <div v-if="!props.isSearching">
@@ -17,7 +17,7 @@
     <hr class="mt-2 border-2 border-[#aeacac] mb-4" />
     <div class="course-container">
       <template v-if="props.semesterData.length > 0">
-        <CourseCard @selected-course="({ code }) => onSelectedCourse(code)" :type="props.typeCourseCards"
+        <CourseCard draggable="true" @selected-course="({ code }) => onSelectedCourse(code)" :type="props.typeCourseCards"
         v-for="semData in props.semesterData" :key="semData.code" :course-data="semData" :mode="semData.mode" />
       </template>
       <div v-else>No se encontró nada</div>

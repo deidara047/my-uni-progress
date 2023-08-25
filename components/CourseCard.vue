@@ -21,7 +21,8 @@
 
 <template>
   <div class="course-card mb-4" @click="onCourseClick"
-    :class="{ 'selector-course-card': props.type === 'selector', 'selected-course': props.mode === 'selected' }">
+    :class="{ 'selector-course-card': props.type === 'selector', 'selected-course': props.mode === 'selected' }"
+    >
     <div v-if="props.courseData.isPassed" class="text-xs golden-background">
       <h3 class="text-white text-center font-medium text-with-border">Curso Ganado</h3>
     </div>
@@ -61,14 +62,6 @@
 
 <script setup>
 const emit = defineEmits(['selected-course']);
-
-onMounted(() => {
-  // console.log({"mode": props.mode})
-});
-
-onUpdated(() => {
-  // console.log({"mode": props.mode})
-});
 
 const props = defineProps({
   courseData: {

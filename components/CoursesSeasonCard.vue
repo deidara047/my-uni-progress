@@ -6,6 +6,12 @@
   background: linear-gradient(167deg, rgb(247, 228, 245) 0%, rgba(196, 216, 237, 1) 49%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#c4d8ed", GradientType=1);
 }
+
+.is-course-over {
+  box-shadow: 0px 0px 15px 1px rgba(9, 132, 227, 0.5) inset;
+  -webkit-box-shadow: 0px 0px 15px 1px rgba(9, 132, 227, 0.5) inset;
+  -moz-box-shadow: 0px 0px 15px 1px rgba(9, 132, 227, 0.5) inset;
+}
 </style>
 
 <template>
@@ -22,15 +28,15 @@
         <p class="font-semibold">35 Créditos</p>
       </div>
       <div class="mt-3">
+        <div class="h-[40px] bg-white w-[300px] mb-3"></div>
         <div class="h-[40px] w-[300px] bg-white mb-3"></div>
         <div class="h-[40px] w-[300px] bg-white mb-3"></div>
-        <div class="h-[40px] w-[300px] bg-white mb-3"></div>
-        <div class="h-[40px] w-[300px] bg-white flex justify-center items-center"><font-awesome-icon :icon="['fas', 'circle-plus']" size="xl" style="color: #e8eaecb9;" /></div>
+        <div @dragenter="() => isCourseOver = true" @dragleave="() => isCourseOver = false" :class="{'is-course-over': isCourseOver, 'border border-blue-400': isCourseOver}" class="h-[40px] w-[300px] bg-white flex justify-center items-center"><font-awesome-icon :icon="['fas', 'circle-plus']" size="xl" style="color: #e8eaecb9;" /></div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-
+const isCourseOver = ref(false);
 </script>

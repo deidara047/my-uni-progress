@@ -30,16 +30,16 @@
         <ul
           class="flex flex-col font-medium mt-4 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-transparent dark:bg-gray-800 md:dark:bg-transparent dark:border-gray-700">
           <li>
-            <NuxtLink to="/main" :class="stylesForLinks">Inicio</NuxtLink>
+            <NuxtLink to="/" :class="stylesForLinks">Inicio</NuxtLink>
           </li>
           <li>
-            <NuxtLink to="/main/my-route" :class="stylesForLinks">Mi ruta</NuxtLink>
+            <NuxtLink to="/my-route" :class="stylesForLinks">Mi ruta</NuxtLink>
           </li>
           <li>
-            <NuxtLink to="#" :class="stylesForLinks">Acerca De</NuxtLink>
+            <NuxtLink to="/about" :class="stylesForLinks">Acerca De</NuxtLink>
           </li>
           <li>
-            <NuxtLink href="#" :class="stylesForLinks">Iniciar Sesión</NuxtLink>
+            <NuxtLink href="/login" :class="stylesForLinks">Iniciar Sesión</NuxtLink>
           </li>
         </ul>
       </div>

@@ -13,7 +13,11 @@
 </style>
 
 <template>
-  <swiper :navigation="true" :modules="modules" class="mySwiper">
+  <swiper 
+    :navigation="true" 
+    :modules="modules" 
+    :allow-touch-move="false"
+    class="mySwiper">
     <swiper-slide>
       <CoursesSeasonCard />
     </swiper-slide>
