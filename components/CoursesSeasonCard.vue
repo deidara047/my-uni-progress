@@ -17,7 +17,7 @@
 <template>
   <div class="w-fit">
     <div class="text-center">
-      <h2 class="font-bold text-2xl font-[Lato]">Primer Semestre 2022</h2>
+      <h2 class="font-bold text-2xl font-[Lato]">{{ formattedType + " " + props.year }}</h2>
     </div>
     <div class="p-4 mt-5 shadow-lg rounded-xl course-season-card">
       <div class="flex justify-end">
@@ -28,10 +28,11 @@
         <p class="font-semibold">35 Créditos</p>
       </div>
       <div class="mt-3">
-        <div class="h-[40px] bg-white w-[300px] mb-3"></div>
-        <div class="h-[40px] w-[300px] bg-white mb-3"></div>
-        <div class="h-[40px] w-[300px] bg-white mb-3"></div>
-        <div @dragenter="() => isCourseOver = true" @dragleave="() => isCourseOver = false" :class="{'is-course-over': isCourseOver, 'border border-blue-400': isCourseOver}" class="h-[40px] w-[300px] bg-white flex justify-center items-center"><font-awesome-icon :icon="['fas', 'circle-plus']" size="xl" style="color: #e8eaecb9;" /></div>
+        <!--div class="h-[40px] bg-white w-[300px] mb-3"></div-->
+        <div @dragenter="() => isCourseOver = true" @dragleave="() => isCourseOver = false"
+          :class="{ 'is-course-over': isCourseOver, 'border border-blue-400': isCourseOver }"
+          class="h-[40px] w-[300px] bg-white flex justify-center items-center"><font-awesome-icon
+            :icon="['fas', 'circle-plus']" size="xl" style="color: #e0e0e0;" /></div>
       </div>
     </div>
   </div>
@@ -39,4 +40,31 @@
 
 <script setup>
 const isCourseOver = ref(false);
+const props = defineProps({
+  type: {
+    type: String,
+    required: true
+  },
+  year: {
+    type: String,
+    required: true
+  },
+  courses: {
+    type: Array,
+    required: true
+  }
+});
+
+const formattedType = computed(() => {
+  switch (props.type) {
+    case "first-semester":
+      return "Primer Semestre";
+    case "vacations-june":
+      return "Vacaciones Junio";
+    case "second-semester":
+      return "Segundo Semestre";
+    case "vacations-december":
+      return "Vacaciones Diciembre";
+  }
+})
 </script>

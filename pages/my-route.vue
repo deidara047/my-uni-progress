@@ -111,7 +111,7 @@
           </div>
           <div class="grow flex justify-center items-center">
             <div class="py-5">
-              <SeasonCardSliderContainer :slidesPerView="slidesPerViewSCSC" :style="getWidthSCSC"
+              <SeasonCardSliderContainer @new-season-data-submitted="(newSeasonData) => addNewSeason(newSeasonData)" :seasons-data="seasonsData" :slidesPerView="slidesPerViewSCSC" :style="getWidthSCSC"
                 class="season-card-slider" />
             </div>
           </div>
@@ -179,13 +179,28 @@
 import data from "@/assets/json/coursesData.json";
 
 const dataLeftPanelLoaded = ref(false);
+
 const coursesData = reactive([]);
+/*
+  Format of seasonData (next app I'll use typescript I promise ^w^)
+[
+	{
+		season: {
+			"type": String,
+			"year": String
+		},
+		courses: Array<String> // Array de code de cursos
+	}
+]
+ */
+const seasonsData = reactive([]);
+
 const searchCriteria = ref("");
 const currentSemLPanIndex = ref(0);
 const isLeftColumnOpened = ref(true);
 const isRightColumnOpened = ref(true);
 const semsWithNoPassed = ref([]);
-/* All this just SeasonCardSliderContainer.vue can have a decent width */
+/* All this so SeasonCardSliderContainer.vue can have a decent width */
 const viewport = ref(0);
 const widthSeasonCardSliderContainer = ref(null);
 const getWidthSCSC = computed(() => {
@@ -234,6 +249,11 @@ onMounted(() => {
     window.removeEventListener("resize", handleResize);
   })
 });
+
+function addNewSeason(newSeasonData) {
+  console.log({...newSeasonData, courses: []});
+  seasonsData.push({...newSeasonData, courses: []});
+}
 
 /* Here is where I leveraged the almost-static breakpoints of TailwindCSS and I had to put every situation */
 function calcWidthSeasonCardSlider() {
