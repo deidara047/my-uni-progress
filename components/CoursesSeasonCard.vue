@@ -11,11 +11,13 @@
   box-shadow: 0px 0px 15px 1px rgba(9, 132, 227, 0.5) inset;
   -webkit-box-shadow: 0px 0px 15px 1px rgba(9, 132, 227, 0.5) inset;
   -moz-box-shadow: 0px 0px 15px 1px rgba(9, 132, 227, 0.5) inset;
+
+  @apply border border-blue-400
 }
 </style>
 
 <template>
-  <div class="w-fit">
+  <div class="w-[332px]">
     <div class="text-center">
       <h2 class="font-bold text-2xl font-[Lato]">{{ formattedType + " " + props.year }}</h2>
     </div>
@@ -24,14 +26,18 @@
         <button class="text-red-600 hover:text-red-400 text-lg">X</button>
       </div>
       <div>
-        <p class="font-semibold">7 Cursos</p>
-        <p class="font-semibold">35 Créditos</p>
+        <p class="font-semibold">{{ props.courses.length }} Cursos</p>
+        <p class="font-semibold">{{ getSumCreditsOfCoursesArr(props.courses) }} Créditos</p>
       </div>
       <div class="mt-3">
         <!--div class="h-[40px] bg-white w-[300px] mb-3"></div-->
-        <div @dragenter="() => isCourseOver = true" @dragleave="() => isCourseOver = false"
-          :class="{ 'is-course-over': isCourseOver, 'border border-blue-400': isCourseOver }"
-          class="h-[40px] w-[300px] bg-white flex justify-center items-center"><font-awesome-icon
+        <CourseCard v-for="crsD in props.courses" :course-data="crsD" />
+        <div 
+          @dragenter="handleDragEnter" 
+          @dragleave="handleDragLeave"
+          @dragover.prevent
+          @drop="handleDrop"
+          class="h-[40px] w-full bg-white flex justify-center items-center"><font-awesome-icon
             :icon="['fas', 'circle-plus']" size="xl" style="color: #e0e0e0;" /></div>
       </div>
     </div>
@@ -39,6 +45,8 @@
 </template>
 
 <script setup>
+// "is-course-over border border-blue-400"
+const emit = defineEmits(['dropped-course'])
 const isCourseOver = ref(false);
 const props = defineProps({
   type: {
@@ -55,6 +63,31 @@ const props = defineProps({
   }
 });
 
+function handleDragEnter(e) {
+  e.preventDefault();
+
+  if(isCourseOver.value === false) {
+    isCourseOver.value = true;
+    e.target.classList.add("is-course-over")
+  }
+}
+
+function handleDragLeave(e) {
+  if(isCourseOver.value === true) {
+    isCourseOver.value = false;
+    e.target.classList.remove("is-course-over")
+  }
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  emit('dropped-course', {type: props.type, year: props.year});
+
+  isCourseOver.value = false;
+  e.target.classList.remove("is-course-over")
+}
+
+
 const formattedType = computed(() => {
   switch (props.type) {
     case "first-semester":
@@ -67,4 +100,9 @@ const formattedType = computed(() => {
       return "Vacaciones Diciembre";
   }
 })
+
+// Copied from 'SemesterCard.vue'
+function getSumCreditsOfCoursesArr(arr) {
+  return arr.reduce((total, course) => total + course.credits, 0);
+}
 </script>

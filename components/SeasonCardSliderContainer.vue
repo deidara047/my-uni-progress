@@ -1,4 +1,4 @@
-<style scoped>
+<style scoped lang="scss">
 .swiper {
   width: 100%;
   height: 100%;
@@ -27,28 +27,20 @@
     <template v-if="seasonsData.length === 0">
       <swiper :navigation="true" :modules="modules" :allow-touch-move="false" class="mySwiper">
         <swiper-slide>
-          <div class="flex flex-col gap-6 max-w-[400px] bg-gray-100 shadow px-6 py-8 rounded-md">
-            <div class="text-center text-7xl">
-              <font-awesome-icon :icon="['fas', 'bomb']" />
-            </div>
-            <div class="text-md">
-              Vaya, parece que no hay nada en tu ruta.
-              Si quieres empezar a diseñar tu ruta, selecciona los parámetros y presiona Crear Período
-            </div>
-            <SelectPeriod
-              @create-season-button-clicked="(newSeasonData) => $emit('newSeasonDataSubmitted', newSeasonData)">
-            </SelectPeriod>
-          </div>
+          <SelectPeriod @create-season-button-clicked="(newSeasonData) => $emit('newSeasonDataSubmitted', newSeasonData)">
+          </SelectPeriod>
         </swiper-slide>
       </swiper>
     </template>
     <template v-else>
-      <swiper :navigation="true" :modules="modules" :allow-touch-move="false" class="mySwiper">
-        <swiper-slide v-for="(season, index) in seasonsData" :key="index">
-          <CoursesSeasonCard v-bind="season" />
+      <swiper @swiper="onSwiper" :navigation="true" :modules="modules" :allow-touch-move="false" class="mySwiper">
+        <swiper-slide v-for="(season, index) in orderedSeasonsData" :key="index">
+          <CoursesSeasonCard @dropped-course="(data) => $emit('droppedCourse', data)" v-bind="season" />
         </swiper-slide>
         <swiper-slide>
-          Agregar Período
+          <SelectPeriod :seasons-exists="seasonsData.length > 0"
+            @create-season-button-clicked="(newSeasonData) => $emit('newSeasonDataSubmitted', newSeasonData)">
+          </SelectPeriod>
         </swiper-slide>
       </swiper>
     </template>
@@ -66,13 +58,63 @@ import { Navigation } from 'swiper/modules';
 
 export default {
   // Using prop drilling as I shouldn't
-  emits: ['newSeasonDataSubmitted'],
+  emits: ['newSeasonDataSubmitted', 'droppedCourse'],
   props: {
     seasonsData: Array
+  },
+  data() {
+    return {
+      swiper: null
+    }
   },
   components: {
     Swiper,
     SwiperSlide
+  }
+  ,
+  computed: {
+    orderedSeasonsData() {
+      const organizedData = {};
+
+      this.seasonsData.forEach((data) => {
+        const type = data.type;
+        const year = data.year;
+
+        if (!organizedData[year]) {
+          organizedData[year] = {};
+        }
+
+        if (!organizedData[year][type]) {
+          organizedData[year][type] = [];
+        }
+
+        organizedData[year][type].push(data);
+      });
+
+      const orderedData = [];
+
+      const years = Object.keys(organizedData).sort();
+      years.forEach((yr) => {
+        const sns = ["first-semester", "vacations-june", "second-semester", "vacations-december"];
+        sns.forEach((type) => {
+          if (organizedData[yr][type]) {
+            orderedData.push(...organizedData[yr][type]);
+          }
+        });
+      });
+
+      return orderedData;
+    }
+  },
+  methods: {
+    onSwiper(swiper) {
+      this.swiper = swiper
+    },
+    goToSlide(type, year) {
+      if(this.swiper) {
+        this.swiper.slideTo(this.orderedSeasonsData.findIndex((season) => season.year === year && season.type === type));
+      }
+    }
   },
   setup() {
     return {

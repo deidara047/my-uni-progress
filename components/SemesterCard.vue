@@ -17,8 +17,16 @@
     <hr class="mt-2 border-2 border-[#aeacac] mb-4" />
     <div class="course-container">
       <template v-if="props.semesterData.length > 0">
-        <CourseCard draggable="true" @selected-course="({ code }) => onSelectedCourse(code)" :type="props.typeCourseCards"
-        v-for="semData in props.semesterData" :key="semData.code" :course-data="semData" :mode="semData.mode" />
+        <CourseCard 
+          @drag-course-start="({code}) => emit('drag-course-start', { code })" 
+          @drag-course-end="() => emit('drag-course-end')"
+          draggable="true" @selected-course="({ code }) => onSelectedCourse(code)" 
+          :type="props.typeCourseCards"
+          v-for="semData in props.semesterData" 
+          :key="semData.code" 
+          :course-data="semData" 
+          :mode="semData.mode" 
+          />
       </template>
       <div v-else>No se encontró nada</div>
     </div>
@@ -43,7 +51,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(["selected-course"]);
+const emit = defineEmits(["selected-course", 'drag-course-start', 'drag-course-end']);
 
 
 function onSelectedCourse(code) {

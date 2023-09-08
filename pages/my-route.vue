@@ -77,8 +77,13 @@
                   </button>
                 </div>
                 <div class="pt-1 flex justify-center overflow-auto select-semester-panel">
-                  <SemesterCard type-course-cards="draggable" :is-searching="searchCriteria != ''"
-                    :semester-data="coursesForLeftPanel" />
+                  <SemesterCard 
+                    @drag-course-start="({code}) => currentDraggedCourseCode = code"
+                    @drag-course-end="() => currentDraggedCourseCode = ''"
+                    type-course-cards="draggable" 
+                    :is-searching="searchCriteria != ''"
+                    :semester-data="coursesForLeftPanel" 
+                  />
                 </div>
               </div>
             </div>
@@ -111,8 +116,15 @@
           </div>
           <div class="grow flex justify-center items-center">
             <div class="py-5">
-              <SeasonCardSliderContainer @new-season-data-submitted="(newSeasonData) => addNewSeason(newSeasonData)" :seasons-data="seasonsData" :slidesPerView="slidesPerViewSCSC" :style="getWidthSCSC"
-                class="season-card-slider" />
+              <SeasonCardSliderContainer 
+                @new-season-data-submitted="(newSeasonData) => addNewSeason(newSeasonData)"
+                @dropped-course="(data) => pushCourseToSeasonByTypeAndYear(data.type, data.year)" 
+                :seasons-data="seasonsData" 
+                :slidesPerView="slidesPerViewSCSC" 
+                :style="getWidthSCSC"
+                class="season-card-slider"
+                ref="SCSCComponent"
+                />
             </div>
           </div>
 
@@ -177,6 +189,7 @@
 
 <script setup>
 import data from "@/assets/json/coursesData.json";
+import Swal from 'sweetalert2'
 
 const dataLeftPanelLoaded = ref(false);
 
@@ -185,15 +198,15 @@ const coursesData = reactive([]);
   Format of seasonData (next app I'll use typescript I promise ^w^)
 [
 	{
-		season: {
-			"type": String,
-			"year": String
-		},
+    type: String,
+    year: String,
 		courses: Array<String> // Array de code de cursos
 	}
 ]
  */
 const seasonsData = reactive([]);
+
+const currentDraggedCourseCode = ref("");
 
 const searchCriteria = ref("");
 const currentSemLPanIndex = ref(0);
@@ -205,16 +218,26 @@ const viewport = ref(0);
 const widthSeasonCardSliderContainer = ref(null);
 const getWidthSCSC = computed(() => {
   return widthSeasonCardSliderContainer.value !== null ? { width: widthSeasonCardSliderContainer.value + 'px' } : {}
-})
+});
+
+const SCSCComponent = ref(null)
 
 const slidesPerViewSCSC = ref(1);
 
 const coursesForLeftPanel = computed(() => {
   if (semsWithNoPassed.value.length > 0) {
     if (searchCriteria.value === "") {
-      return coursesData.filter((course) => (course.semester === semsWithNoPassed.value[currentSemLPanIndex.value] && course.isPassed === false));
+      if (seasonsData.length > 0) {
+        return coursesData.filter((course) => (course.semester === semsWithNoPassed.value[currentSemLPanIndex.value] && course.isPassed === false && !seasonsData.some(season => season.courses.includes(course))));
+      } else {
+        return coursesData.filter((course) => (course.semester === semsWithNoPassed.value[currentSemLPanIndex.value] && course.isPassed === false));
+      }
     } else {
-      return coursesData.filter((course) => (course.code.includes(searchCriteria.value.trim()) || removeAccents(course.name.toLowerCase()).includes(removeAccents(searchCriteria.value.trim())))).slice(0, 6);
+      if (seasonsData.length > 0) {
+        return coursesData.filter((course) => (course.code.includes(searchCriteria.value.trim()) || removeAccents(course.name.toLowerCase()).includes(removeAccents(searchCriteria.value.trim())))  && !seasonsData.some(season => season.courses.includes(course))).slice(0, 6);
+      } else {
+        return coursesData.filter((course) => (course.code.includes(searchCriteria.value.trim()) || removeAccents(course.name.toLowerCase()).includes(removeAccents(searchCriteria.value.trim())))).slice(0, 6);
+      }
     }
   }
 });
@@ -250,9 +273,29 @@ onMounted(() => {
   })
 });
 
+watch(seasonsData, (newVal, oldVal) => {
+  /* If coursesForLeftPanel.value.length === 0, i.e., no course is left in the
+     current Semester in the left panel, removes the current Semester from left panel and
+     goes to the lowest semester with no passed courses left
+  */
+  if(coursesForLeftPanel.value.length === 0) {
+    semsWithNoPassed.value.splice(currentSemLPanIndex.value, 1);
+  }
+})
+
 function addNewSeason(newSeasonData) {
-  console.log({...newSeasonData, courses: []});
-  seasonsData.push({...newSeasonData, courses: []});
+  const { type, year } = newSeasonData;
+  
+  if(seasonsData.find((season) => season.year === year && season.type === type)) {
+    Swal.fire(
+      'Período ya existente', 
+      "Ya existe un período con temporada '" + getTypeNameByTypeCode(type) + "' y con año '" + year + "'",
+      "error"
+    );
+  } else {
+    seasonsData.push({...newSeasonData, courses: []});
+    SCSCComponent.value.goToSlide(type, year);
+  }
 }
 
 /* Here is where I leveraged the almost-static breakpoints of TailwindCSS and I had to put every situation */
@@ -293,6 +336,42 @@ function calcWidthSeasonCardSlider() {
       }
     }
   }
+}
+
+
+/* Copied from 'CoursesSeasonCard.vue' */
+function getTypeNameByTypeCode(typeCode) {
+  switch (typeCode) {
+    case "first-semester":
+      return "Primer Semestre";
+    case "vacations-june":
+      return "Vacaciones Junio";
+    case "second-semester":
+      return "Segundo Semestre";
+    case "vacations-december":
+      return "Vacaciones Diciembre";
+  }
+}
+
+function pushCourseToSeasonByTypeAndYear(type, year) {
+  for (let i = 0; i < seasonsData.length; i++) {
+    if(seasonsData[i].year === year && seasonsData[i].type === type && currentDraggedCourseCode.value != "") {
+      seasonsData[i].courses.push(coursesData.find((course) => course.code === currentDraggedCourseCode.value))
+    }
+  }
+
+  return null;
+}
+
+function deleteSeasonByTypeAndYear(type, year) {
+  for (let i = 0; i < seasonsData.length; i++) {
+    if(seasonsData[i].year === year && seasonsData[i].type === type) {
+      seasonsData.splice(i,1);
+      return season;
+    }
+  }
+
+  return null;
 }
 
 /* Those have a circular behaviour. Let N be length of array. When currentSemLPanIndex reaches N, on increase goes back 

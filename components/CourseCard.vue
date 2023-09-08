@@ -22,7 +22,9 @@
 <template>
   <div class="course-card mb-4" @click="onCourseClick"
     :class="{ 'selector-course-card': props.type === 'selector', 'selected-course': props.mode === 'selected' }"
-    >
+    @dragstart="() => emit('drag-course-start', {'code': props.courseData.code})"
+    @dragend="() => emit('drag-course-end')"
+  >
     <div v-if="props.courseData.isPassed" class="text-xs golden-background">
       <h3 class="text-white text-center font-medium text-with-border">Curso Ganado</h3>
     </div>
@@ -61,7 +63,7 @@
 </template>
 
 <script setup>
-const emit = defineEmits(['selected-course']);
+const emit = defineEmits(['selected-course','drag-course-start','drag-course-end']);
 
 const props = defineProps({
   courseData: {
