@@ -35,7 +35,10 @@
     <template v-else>
       <swiper @swiper="onSwiper" :navigation="true" :modules="modules" :allow-touch-move="false" class="mySwiper">
         <swiper-slide v-for="(season, index) in orderedSeasonsData" :key="index">
-          <CoursesSeasonCard @dropped-course="(data) => $emit('droppedCourse', data)" v-bind="season" />
+          <CoursesSeasonCard 
+            @clicked-x-button-course="(data) => onXButtonCourseClick(data)"
+            @clicked-x-button-season="(data) => $emit('clickedXButtonSeason', data)"
+            @dropped-course="(data) => $emit('droppedCourse', data)" v-bind="season" />
         </swiper-slide>
         <swiper-slide>
           <SelectPeriod :seasons-exists="seasonsData.length > 0"
@@ -58,7 +61,7 @@ import { Navigation } from 'swiper/modules';
 
 export default {
   // Using prop drilling as I shouldn't
-  emits: ['newSeasonDataSubmitted', 'droppedCourse'],
+  emits: ['newSeasonDataSubmitted', 'droppedCourse','clickedXButtonCourse','clickedXButtonSeason'],
   props: {
     seasonsData: Array
   },
@@ -111,9 +114,13 @@ export default {
       this.swiper = swiper
     },
     goToSlide(type, year) {
-      if(this.swiper) {
+      if (this.swiper) {
         this.swiper.slideTo(this.orderedSeasonsData.findIndex((season) => season.year === year && season.type === type));
       }
+    },
+    /* Prop drilling: order: CourseCard -> CoursesSeasonCard -> SeasonCardSliderContainer -> my-route */
+    onXButtonCourseClick(data) {
+      this.$emit('clickedXButtonCourse', data)
     }
   },
   setup() {

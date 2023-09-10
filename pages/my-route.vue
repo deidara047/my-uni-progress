@@ -77,13 +77,9 @@
                   </button>
                 </div>
                 <div class="pt-1 flex justify-center overflow-auto select-semester-panel">
-                  <SemesterCard 
-                    @drag-course-start="({code}) => currentDraggedCourseCode = code"
-                    @drag-course-end="() => currentDraggedCourseCode = ''"
-                    type-course-cards="draggable" 
-                    :is-searching="searchCriteria != ''"
-                    :semester-data="coursesForLeftPanel" 
-                  />
+                  <SemesterCard @drag-course-start="({ code }) => currentDraggedCourseCode = code"
+                    @drag-course-end="() => currentDraggedCourseCode = ''" type-course-cards="draggable"
+                    :is-searching="searchCriteria != ''" :semester-data="coursesForLeftPanel" />
                 </div>
               </div>
             </div>
@@ -116,18 +112,14 @@
           </div>
           <div class="grow flex justify-center items-center">
             <div class="py-5">
-              <SeasonCardSliderContainer 
-                @new-season-data-submitted="(newSeasonData) => addNewSeason(newSeasonData)"
-                @dropped-course="(data) => pushCourseToSeasonByTypeAndYear(data.type, data.year)" 
-                :seasons-data="seasonsData" 
-                :slidesPerView="slidesPerViewSCSC" 
-                :style="getWidthSCSC"
-                class="season-card-slider"
-                ref="SCSCComponent"
-                />
+              <SeasonCardSliderContainer @new-season-data-submitted="(newSeasonData) => addNewSeason(newSeasonData)"
+                @dropped-course="(data) => pushCourseToSeasonByTypeAndYear(data.type, data.year)"
+                @clicked-x-button-course="({ code, type, year }) => deleteCourseFromSeasonByTypeAndYear(code, type, year)"
+                @clicked-x-button-season="({ type, year }) => deleteSeasonByTypeAndYear(type, year)"
+                :seasons-data="seasonsData" :slidesPerView="slidesPerViewSCSC" :style="getWidthSCSC"
+                class="season-card-slider" ref="SCSCComponent" />
             </div>
           </div>
-
         </div>
         <div class="py-4 px-5 border">
           <template v-if="coursesData.length > 0">
@@ -190,18 +182,17 @@
 <script setup>
 import data from "@/assets/json/coursesData.json";
 import Swal from 'sweetalert2'
-
 const dataLeftPanelLoaded = ref(false);
 
 const coursesData = reactive([]);
 /*
   Format of seasonData (next app I'll use typescript I promise ^w^)
 [
-	{
+  {
     type: String,
     year: String,
-		courses: Array<String> // Array de code de cursos
-	}
+    courses: Array<String> // Array de code de cursos
+  }
 ]
  */
 const seasonsData = reactive([]);
@@ -234,7 +225,7 @@ const coursesForLeftPanel = computed(() => {
       }
     } else {
       if (seasonsData.length > 0) {
-        return coursesData.filter((course) => (course.code.includes(searchCriteria.value.trim()) || removeAccents(course.name.toLowerCase()).includes(removeAccents(searchCriteria.value.trim())))  && !seasonsData.some(season => season.courses.includes(course))).slice(0, 6);
+        return coursesData.filter((course) => (course.code.includes(searchCriteria.value.trim()) || removeAccents(course.name.toLowerCase()).includes(removeAccents(searchCriteria.value.trim()))) && !seasonsData.some(season => season.courses.includes(course))).slice(0, 6);
       } else {
         return coursesData.filter((course) => (course.code.includes(searchCriteria.value.trim()) || removeAccents(course.name.toLowerCase()).includes(removeAccents(searchCriteria.value.trim())))).slice(0, 6);
       }
@@ -278,22 +269,22 @@ watch(seasonsData, (newVal, oldVal) => {
      current Semester in the left panel, removes the current Semester from left panel and
      goes to the lowest semester with no passed courses left
   */
-  if(coursesForLeftPanel.value.length === 0) {
+  if (coursesForLeftPanel.value.length === 0) {
     semsWithNoPassed.value.splice(currentSemLPanIndex.value, 1);
   }
 })
 
 function addNewSeason(newSeasonData) {
   const { type, year } = newSeasonData;
-  
-  if(seasonsData.find((season) => season.year === year && season.type === type)) {
+
+  if (seasonsData.find((season) => season.year === year && season.type === type)) {
     Swal.fire(
-      'Período ya existente', 
+      'Período ya existente',
       "Ya existe un período con temporada '" + getTypeNameByTypeCode(type) + "' y con año '" + year + "'",
       "error"
     );
   } else {
-    seasonsData.push({...newSeasonData, courses: []});
+    seasonsData.push({ ...newSeasonData, courses: [] });
     SCSCComponent.value.goToSlide(type, year);
   }
 }
@@ -355,23 +346,45 @@ function getTypeNameByTypeCode(typeCode) {
 
 function pushCourseToSeasonByTypeAndYear(type, year) {
   for (let i = 0; i < seasonsData.length; i++) {
-    if(seasonsData[i].year === year && seasonsData[i].type === type && currentDraggedCourseCode.value != "") {
+    if (seasonsData[i].year === year && seasonsData[i].type === type && currentDraggedCourseCode.value != "") {
       seasonsData[i].courses.push(coursesData.find((course) => course.code === currentDraggedCourseCode.value))
     }
   }
+}
 
-  return null;
+function deleteCourseFromSeasonByTypeAndYear(code, type, year) {
+  for (let i = 0; i < seasonsData.length; i++) {
+    if (seasonsData[i].year === year && seasonsData[i].type === type) {
+      console.log(seasonsData[i])
+      seasonsData[i].courses.splice(seasonsData[i].courses.findIndex((course) => course.code === code), 1)
+    }
+  }
 }
 
 function deleteSeasonByTypeAndYear(type, year) {
-  for (let i = 0; i < seasonsData.length; i++) {
-    if(seasonsData[i].year === year && seasonsData[i].type === type) {
-      seasonsData.splice(i,1);
-      return season;
-    }
-  }
+  Swal.fire({
+    title: 'Eliminar período',
+    text: "¿Está seguro de eliminar este período?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Eliminar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      for (let i = 0; i < seasonsData.length; i++) {
+        if (seasonsData[i].year === year && seasonsData[i].type === type) {
+          seasonsData.splice(i, 1);
+        }
+      }
 
-  return null;
+      Swal.fire(
+        'Período Eliminado',
+        'El período ha sido eliminado con éxito',
+        'success'
+      )
+    }
+  })
 }
 
 /* Those have a circular behaviour. Let N be length of array. When currentSemLPanIndex reaches N, on increase goes back 

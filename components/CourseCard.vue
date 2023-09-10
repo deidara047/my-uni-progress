@@ -17,10 +17,16 @@
 .selected-course {
   box-shadow: 0 0 6px 4px #ff9ff3;
 }
+
+.cc-x-button {
+  position: absolute;
+  top: -16px;
+  right: -10px;
+}
 </style>
 
 <template>
-  <div class="course-card mb-4" @click="onCourseClick"
+  <div class="course-card mb-4 relative" @click="onCourseClick"
     :class="{ 'selector-course-card': props.type === 'selector', 'selected-course': props.mode === 'selected' }"
     @dragstart="() => emit('drag-course-start', {'code': props.courseData.code})"
     @dragend="() => emit('drag-course-end')"
@@ -28,7 +34,10 @@
     <div v-if="props.courseData.isPassed" class="text-xs golden-background">
       <h3 class="text-white text-center font-medium text-with-border">Curso Ganado</h3>
     </div>
-    <div class="flex text-sm">
+    <div v-if="props.type === 'belong-to-season' && showXButton" class="cc-x-button" @mouseenter.prevent="() => showXButton = true" @mouseleave="() => showXButton = false" @click="onXButtonCourseClick">
+      <button class="rounded-full bg-red-600 hover:bg-red-500" style="padding: 0.5px 9px"><font-awesome-icon :icon="['fas', 'xmark']" style="color: #fff;" size="xs" /></button>
+    </div>
+    <div class="flex text-sm" @mouseenter.prevent="() => showXButton = true" @mouseleave="() => showXButton = false">
       <div class="course-colour border w-[12px]"
         :style="{ borderColor: getColorByBelongsTo(props.courseData.belongsTo, true), backgroundColor: getColorByBelongsTo(props.courseData.belongsTo, false) }">
       </div>
@@ -63,7 +72,14 @@
 </template>
 
 <script setup>
-const emit = defineEmits(['selected-course','drag-course-start','drag-course-end']);
+const emit = defineEmits(
+  [
+    'selected-course',
+    'clicked-x-button-course',
+    'drag-course-start',
+    'drag-course-end'
+  ]);
+const showXButton = ref(false)
 
 const props = defineProps({
   courseData: {
@@ -72,7 +88,11 @@ const props = defineProps({
   },
   type: {
     type: String,
-    default: "normal" // Types: {normal,selector}; if type is selector, it can emit when it's clicked
+    default: "normal" 
+    /* Types: {normal,selector, belong-to-season}; 
+      if type is selector, it can emit when it's clicked 
+      if type is belong-to-season, has a x button on hover so it can be removed from a season
+    */
   },
   /**
    * Modes: {none, selected, direct-pre, direct-post, chain-pre, chain-post, others}
@@ -94,6 +114,13 @@ const props = defineProps({
 function onCourseClick() {
   if (props.type === "selector") {
     emit('selected-course', { 'code': props.courseData.code })
+  }
+}
+
+/* Prop drilling: order: CourseCard -> CoursesSeasonCard -> SeasonCardSliderContainer -> my-route */
+function onXButtonCourseClick() {
+  if (props.type === "belong-to-season") {
+    emit('clicked-x-button-course', { 'code': props.courseData.code })
   }
 }
 

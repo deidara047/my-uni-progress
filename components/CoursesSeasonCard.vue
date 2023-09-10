@@ -23,7 +23,9 @@
     </div>
     <div class="p-4 mt-5 shadow-lg rounded-xl course-season-card">
       <div class="flex justify-end">
-        <button class="text-red-600 hover:text-red-400 text-lg">X</button>
+        <ToolTip tooltip-text="Eliminar período">
+          <button class="text-red-600 hover:text-red-400 text-lg" @click="() => emit('clicked-x-button-season', {type: props.type, year: props.year})">X</button>
+        </ToolTip>
       </div>
       <div>
         <p class="font-semibold">{{ props.courses.length }} Cursos</p>
@@ -31,8 +33,8 @@
       </div>
       <div class="mt-3">
         <!--div class="h-[40px] bg-white w-[300px] mb-3"></div-->
-        <CourseCard v-for="crsD in props.courses" :course-data="crsD" />
-        <div 
+        <CourseCard @clicked-x-button-course="(data) => onXButtonCourseClick(data)" type="belong-to-season" v-for="crsD in props.courses" :course-data="crsD" />
+        <div
           @dragenter="handleDragEnter" 
           @dragleave="handleDragLeave"
           @dragover.prevent
@@ -46,7 +48,7 @@
 
 <script setup>
 // "is-course-over border border-blue-400"
-const emit = defineEmits(['dropped-course'])
+const emit = defineEmits(['dropped-course','clicked-x-button-course','clicked-x-button-season'])
 const isCourseOver = ref(false);
 const props = defineProps({
   type: {
@@ -70,6 +72,11 @@ function handleDragEnter(e) {
     isCourseOver.value = true;
     e.target.classList.add("is-course-over")
   }
+}
+
+/* Prop drilling: order: CourseCard -> CoursesSeasonCard -> SeasonCardSliderContainer -> my-route */
+function onXButtonCourseClick(data) {
+  emit('clicked-x-button-course', { ...data, type: props.type, year: props.year })
 }
 
 function handleDragLeave(e) {
