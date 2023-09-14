@@ -125,7 +125,11 @@
           <template v-if="coursesData.length > 0">
             <MainRightCol
               @right-button-clicked="() => { isRightColumnOpened = !isRightColumnOpened; calcWidthSeasonCardSlider() }"
-              :course-data="coursesData" :is-progreso-section-opened="false" page-that-uses-this-component="MyRoute" />
+              :courses-data="coursesData" 
+              :is-general-progress-panel-opened="false" 
+              page-that-uses-this-component="MyRoute" 
+              :seasons-data="seasonsData"
+            />
           </template>
           <div v-else class="pt-5 text-center">
             <div role="status">

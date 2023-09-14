@@ -55,7 +55,7 @@
           </div>
         </div>
 
-        <MainRightCol @right-button-clicked="() => rightColumnOpened = !rightColumnOpened" v-if="coursesData.length > 0" :course-data="coursesData" class="border border-gray-300 h-fit" :class="columnsWidths.right" />
+        <MainRightCol @right-button-clicked="() => rightColumnOpened = !rightColumnOpened" v-if="coursesData.length > 0" :courses-data="coursesData" class="border border-gray-300 h-fit" :class="columnsWidths.right" />
         <div v-else class="pt-5 text-center">
           <div role="status">
             <div role="status">
