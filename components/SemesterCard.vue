@@ -12,7 +12,7 @@
     </div>
     <div v-if="!props.isSearching"><i class="text-sm text-slate-700">
         <p>- Total: ({{ semesterData.length }} cursos: {{ getSumCreditsOfCoursesArr(semesterData) }} cdts)</p>
-        <p>- Ganado: ({{ passedCourses.length }} cursos: {{ getSumCreditsOfCoursesArr(passedCourses) }} cdts)</p>
+        <p v-if="showPassedCoursesText" >- Ganado: ({{ passedCourses.length }} cursos: {{ getSumCreditsOfCoursesArr(passedCourses) }} cdts)</p>
       </i></div>
     <hr class="mt-2 border-2 border-[#aeacac] mb-4" />
     <div class="course-container">
@@ -48,7 +48,11 @@ const props = defineProps({
   isSearching: {
     type: Boolean,
     default: false
-  }
+  },
+  showPassedCoursesText: {
+    type: Boolean,
+    default: true
+  },
 });
 
 const emit = defineEmits(["selected-course", 'drag-course-start', 'drag-course-end']);

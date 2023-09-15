@@ -99,6 +99,6 @@ onMounted(() => {
 });
 
 useHead({
-  title: "Cursos de Ingeniería en Sistemas en la USAC"
-})
+  title: "Cursos de Ingeniería en Sistemas en la USAC | Progreso FIUSAC"
+});
 </script>

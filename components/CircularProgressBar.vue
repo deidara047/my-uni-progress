@@ -10,14 +10,16 @@
 </style>
 
 <template>
-  <div class="cpb-container w-fit relative" :style="{ '--before-size': props.radius * 0.7 + 'px' }">
-    <div class="circular-progress shadow-lg bg-white flex items-center justify-center rounded-[50%] gap-y-[30px] relavite" :class="[
-    ]" :style="{
-  background: `conic-gradient(${progressColor} ${3.6 * props.percentage}deg, #ededed 0deg)`,
-  height: `${props.radius}px`,
-  width: `${props.radius}px`
-}">
-      <span class="progress-value relative font-semibold" :style="{color: progressColor}">{{ roundNumber(props.percentage) }}%</span>
+  <div class="cpb-container w-fit relative justify-center" :style="{ '--before-size': props.radius * 0.7 + 'px' }">
+    <div class="circular-progress shadow-lg mx-auto bg-white flex items-center justify-center rounded-[50%] gap-y-[30px] relavite"
+      :style="{
+        background: `conic-gradient(${progressColor} ${3.6 * props.percentage}deg, #ededed 0deg)`,
+        height: `${props.radius}px`,
+        width: `${props.radius}px`
+      }"
+    >
+      <span class="progress-value relative font-semibold" :style="{ color: progressColor }">{{ roundNumber(props.percentage)
+      }}%</span>
     </div>
 
     <div class="text-center mt-2">
