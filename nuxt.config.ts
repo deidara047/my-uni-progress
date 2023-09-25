@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/google-fonts'],
+  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/google-fonts', '@nuxtjs/supabase'],
   googleFonts: {
     families: {
       Roboto: true,
@@ -11,5 +11,10 @@ export default defineNuxtConfig({
   css: [
     "@/assets/css/main.scss",
     '@fortawesome/fontawesome-svg-core/styles.css'
-  ]
+  ],
+  supabase: {
+    redirectOptions: {
+      exclude: ["/","/about"]
+    }
+  }
 })

@@ -190,6 +190,21 @@ import data from "@/assets/json/coursesData.json";
 import Swal from 'sweetalert2'
 const dataLoaded = ref(false);
 
+/**
+ * Format of coursesData:
+ * {
+    "semester": Number
+    "code": String
+    "credits": Number
+    "name": String
+    "isRequired": boolean
+    "prerequisites": Array<String<courseData.code>>
+    "isPassed": boolean
+    "belongsTo": Number
+    "alongWith": String | null
+  },
+ */
+
 const coursesData = reactive([]);
 /*
   Format of seasonData (next app I'll use typescript I promise ^w^)

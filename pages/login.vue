@@ -1,10 +1,7 @@
 <style scoped lang="scss">
-.btn-submit {
-  background-color: rgb(29 78 216) !important;
 
-  &:hover {
-    background-color: rgb(22, 68, 194) !important;
-  }
+.btn-submit-loading {
+  background-color: rgb(130, 159, 241) !important;
 
   @apply text-white focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none;
 }
@@ -18,16 +15,18 @@
       </div>
       <form @submit.prevent="onLoginSubmit">
         <div class="mb-3">
-          <label class="block" for="user">Usuario: </label>
-          <input v-model="loginData.user" required class="w-full text-input" id="user" type="text" />
+          <label class="block" for="email">Usuario: </label>
+          <input v-model="loginData.email" required class="w-full text-input" id="email" type="email" />
         </div>
         <div class="mb-5">
           <label class="block" for="pwd">Contraseña: </label>
           <input v-model="loginData.pwd" required class="w-full text-input" id="pwd" type="password" />
         </div>
-        <p class="text-gray-600 italic my-2"><font-awesome-icon v-if="pageLoaded" :icon="['fas', 'triangle-exclamation']" /> Advertencia: Debes tener una cuenta previamente, no se pueden crear cuentas.</p>
+        <p class="text-gray-600 italic my-2"><font-awesome-icon v-if="pageLoaded"
+            :icon="['fas', 'triangle-exclamation']" /> Advertencia: Debes tener una cuenta previamente, no se pueden crear
+          cuentas.</p>
         <div class="text-center">
-          <button type="submit" class="btn-submit">Iniciar Sesión</button>
+          <button type="submit" :disabled="loading" :class="[buttonSubmitClass]">{{ loading ? "Cargando..." : "Iniciar Sesión" }}</button>
         </div>
       </form>
     </div>
@@ -36,16 +35,34 @@
 
 <script setup>
 import Swal from 'sweetalert2';
-
+const supabase = useSupabaseClient();
+const loading = ref(false);
 const pageLoaded = ref(false);
 const loginData = ref({
-  user: '',
+  email: '',
   pwd: ''
 });
 
-function onLoginSubmit() {
-  if(loginData.value.user != '' && loginData.value.pwd != '') {
-    // Submit login info
+const buttonSubmitClass = computed(() => {
+  return loading.value ? "btn-submit-loading": "btn-primary";
+})
+
+async function onLoginSubmit() {
+  if (loginData.value.email != '' && loginData.value.pwd != '') {
+    try {
+      loading.value = true
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: loginData.value.email,
+        password: loginData.value.pwd
+      })
+      if (error) throw error
+      navigateTo('/')
+      
+    } catch (error) {
+      Swal.fire("Error", error.error_description || error.message, "error")
+    } finally {
+      loading.value = false
+    }
   } else {
     Swal.fire('Error', 'Debes de llenar todos los apartados', 'error');
   }
@@ -57,5 +74,15 @@ useHead({
 
 onMounted(() => {
   pageLoaded.value = true;
+});
+
+definePageMeta({
+  middleware: [
+    function(to, from) {
+      const user = useSupabaseUser();
+
+      if(user) return navigateTo("/");
+    }
+  ]
 })
 </script>

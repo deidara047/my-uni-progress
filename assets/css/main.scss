@@ -1,5 +1,26 @@
 @tailwind base;
 
+.btn-primary {
+  background-color: rgb(29 78 216) !important;
+
+  &:hover {
+    background-color: rgb(22, 68, 194) !important;
+  }
+
+  @apply text-white focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none;
+}
+
+.btn-danger {
+  background-color: #e74c3c !important;
+
+  &:hover {
+    background-color: #ee5a4a !important;
+  }
+
+  @apply text-white focus:ring-4 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 focus:outline-none;
+}
+
+
 .golden-background {
   background: rgb(212, 175, 55);
   background: linear-gradient(
