@@ -52,8 +52,8 @@
 
 <template>
   <main class="container mx-auto my-6">
-    <!-- Loaded content -->
-    <div v-if="dataLoaded">
+    <!-- Loaded content  coursesData.length > 0 && dataLoaded-->
+    <div v-if="coursesData.length > 0 && dataLoaded">
       <div class="flex" style="min-height: 800px;">
         <div class="py-4 px-5 border">
           <div class="flex justify-end">
@@ -61,13 +61,20 @@
               @right-button-clicked="() => { isLeftColumnOpened = !isLeftColumnOpened; calcWidthSeasonCardSlider() }" />
           </div>
           <div v-show="isLeftColumnOpened">
-            <h1 class="text-2xl font-semibold">Cursos</h1>
+            <div class="flex flex-col gap-y-2 max-w-[70%] mx-auto mb-3">
+              <button class="btn-primary"><font-awesome-icon :icon="['fas', 'floppy-disk']" /> Guardar</button>
+              <button @click="showInfoSaveButton" class="text-gray-500 text-xs hover:text-gray-400 transition-colors"><font-awesome-icon :icon="['fas', 'circle-info']" /> Más información...</button>
+            </div>
+            <!--h1 class="text-2xl font-semibold">Cursos</h1-->
             <hr />
             <p class="pt-2 max-w-[300px]">Arrastra el curso al período que vayas a cursarlo</p>
             <div class="pt-2">
               <div class="flex rounded">
-                <div class="bg-gray-100 border-l border-t border-b border-gray-300 px-3 rounded-l-md flex items-center"><font-awesome-icon style="color: rgb(37, 37, 37)" :icon="['fas', 'magnifying-glass']" /></div>
-                <input type="text" placeholder="Buscar curso..." v-model="searchCriteria" class="border border-gray-300 rounded-r-md p-2 outline-0 grow" />
+                <div class="bg-gray-100 border-l border-t border-b border-gray-300 px-3 rounded-l-md flex items-center">
+                  <font-awesome-icon style="color: rgb(37, 37, 37)" :icon="['fas', 'magnifying-glass']" />
+                </div>
+                <input type="text" placeholder="Buscar curso..." v-model="searchCriteria"
+                  class="border border-gray-300 rounded-r-md p-2 outline-0 grow" />
               </div>
               <div class="flex justify-end py-4">
                 <button :disabled="searchCriteria != ''"
@@ -84,7 +91,8 @@
               <div class="pt-1 flex justify-center overflow-auto select-semester-panel">
                 <SemesterCard @drag-course-start="({ code }) => currentDraggedCourseCode = code"
                   @drag-course-end="() => currentDraggedCourseCode = ''" type-course-cards="draggable"
-                  :is-searching="searchCriteria != ''" :show-passed-courses-text="false" :semester-data="coursesForLeftPanel" />
+                  :is-searching="searchCriteria != ''" :show-passed-courses-text="false"
+                  :semester-data="coursesForLeftPanel" />
               </div>
             </div>
           </div>
@@ -96,6 +104,7 @@
               pequeña (en ancho): Se recomienda que tu viewport sea mayor o igual que 1311px. Disminuye el zoom de tu
               navegador o deberás conseguir una pantalla más grande.</p>
             <h1 class="font-bold text-3xl">Mi ruta</h1>
+            <!--p>Disclaimer: Esta página no está optimizada. Si te vas a otra ruta de esta página (por ejemplo a Acerca De), y regresas, tu progreso se borrará. También no se guarda automáticamente, por lo que tendrás que darle click cada vez que quieras guardar, al botón Guardar que se encuentra en el panel de la izquierda (sep, a la vieja escuela).</p-->
           </div>
           <div class="flex justify-center items-center my-[160px]">
             <div class="py-5">
@@ -186,8 +195,10 @@
 </template>
 
 <script setup>
-import data from "@/assets/json/coursesData.json";
+// import crsData from "@/assets/json/coursesData.json";
 import Swal from 'sweetalert2'
+
+const supabase = useSupabaseClient();
 const dataLoaded = ref(false);
 
 /**
@@ -240,9 +251,9 @@ const coursesForLeftPanel = computed(() => {
   if (semsWithNoPassed.value.length > 0) {
     if (searchCriteria.value === "") {
       if (seasonsData.length > 0) {
-        return coursesData.filter((course) => (course.semester === semsWithNoPassed.value[currentSemLPanIndex.value] && course.isPassed === false && !seasonsData.some(season => season.courses.includes(course))));
+        return coursesData.filter((course) => (course.semester === semsWithNoPassed.value[currentSemLPanIndex.value] && (course.isPassed === false || course.is_passed === false) && !seasonsData.some(season => season.courses.includes(course))));
       } else {
-        return coursesData.filter((course) => (course.semester === semsWithNoPassed.value[currentSemLPanIndex.value] && course.isPassed === false));
+        return coursesData.filter((course) => (course.semester === semsWithNoPassed.value[currentSemLPanIndex.value] && (course.isPassed === false || course.is_passed === false)));
       }
     } else {
       if (seasonsData.length > 0) {
@@ -259,34 +270,99 @@ useHead({
 });
 
 onMounted(() => {
-  coursesData.push(...data);
+  supabase
+    .from('course')
+    .select('*')
+    .then(({ data }) => {
+      coursesData.push(...data);
+      hydrateSeasonsData();
+      
+      // Method: find the lowest semester number with unpassed courses left
+      let semCounter = 1;
 
-  // Method: find the lowest semester number with unpassed courses left
-  let semCounter = 1;
+      while (true) {
+        if (coursesData.filter((course) => (course.semester === semCounter && (course.isPassed === false || course.is_passed === false))).length > 0) {
+          semsWithNoPassed.value.push(semCounter);
+        }
 
-  while (true) {
-    if ([...coursesData.filter((course) => (course.semester === semCounter && course.isPassed === false))].length > 0) {
-      semsWithNoPassed.value.push(semCounter);
-    }
+        if (semCounter === 10) break;
+        semCounter++;
+      }
+      // EndMethod
 
-    if (semCounter === 10) break;
-    semCounter++;
-  }
-  // EndMethod
+      handleResize();
+      calcWidthSeasonCardSlider();
+      window.addEventListener("resize", handleResize);
+    });
+});
 
-  dataLoaded.value = true;
-  const handleResize = () => {
-    viewport.value = window.innerWidth;
-    calcWidthSeasonCardSlider();
-  }
+async function hydrateSeasonsData() {
+  supabase.rpc("get_seasons_and_its_courses")
+    .then((seasonsQuery) => {
+      /* So I still haven't learn how to make a proper query where I get the formated data directly from DB, i.e.:
+      Format of seasonData
+      [
+        {
+          type: String,
+          year: String,
+          courses: Array<String> // Array de code de cursos
+        }
+      ]
+  
+      So, I have a Many To Many relation with course and season tables, so because I don't know how to make a proper Array with JSON
+      format with all the data loaded from course table (depending on the courses codes,s saved in each season), so I made a left join and
+      I query repeated data, and the query looks like this:
+      (season_id bigint, season_type text, season_year text, course_semester bigint, course_code text, course_credits bigint, course_name text, course_is_required boolean, course_prerequisites text[], course_is_passed boolean, course_belongs_to bigint, course_along_with text)
+      sooo I'm gonna manually create the object so it can fit in my variable format of this page, seasonData
+    */
 
-  handleResize();
+      // Method: format the obtained data from query into the proper format of seasonData (the variable of this page), for more info, read above.
+      let formattedSeasonData = [];
+
+      seasonsQuery.data.forEach((data) => {
+        let idxOfSeason = formattedSeasonData.findIndex((sn) => data.season_id === sn.id && data.season_type === sn.type && data.season_year === sn.year);
+        if (idxOfSeason === -1) {
+          formattedSeasonData.push({
+            id: data.season_id, type: data.season_type, year: data.season_year, courses: [{
+              semester: data.course_semester,
+              code: data.course_code,
+              credits: data.course_credits,
+              name: data.course_name,
+              is_required: data.course_is_required,
+              prerequisites: data.course_prerequisites,
+              is_passed: data.course_is_passed,
+              belongs_to: data.course_belongs_to,
+              along_with: data.course_along_with
+            }]
+          })
+        } else {
+          // Season where we are going to add the course
+          formattedSeasonData[idxOfSeason].courses.push({
+            semester: data.course_semester,
+            code: data.course_code,
+            credits: data.course_credits,
+            name: data.course_name,
+            is_required: data.course_is_required,
+            prerequisites: data.course_prerequisites,
+            is_passed: data.course_is_passed,
+            belongs_to: data.course_belongs_to,
+            along_with: data.course_along_with
+          })
+        }
+      });
+      seasonsData.push(...formattedSeasonData);
+      dataLoaded.value = true;
+      return true
+    });
+}
+
+const handleResize = () => {
+  viewport.value = window.innerWidth;
   calcWidthSeasonCardSlider();
+}
 
-  window.addEventListener("resize", handleResize);
-  onUnmounted(() => {
-    window.removeEventListener("resize", handleResize);
-  })
+onUnmounted(() => {
+  window.removeEventListener("resize", handleResize);
 });
 
 watch(seasonsData, (newVal, oldVal) => {
@@ -312,6 +388,10 @@ function addNewSeason(newSeasonData) {
     seasonsData.push({ ...newSeasonData, courses: [] });
     SCSCComponent.value.goToSlide(type, year);
   }
+}
+
+function showInfoSaveButton() {
+  Swal.fire("Más información...", "Esta página no está optimizada. Si te vas a otra ruta de esta página (por ejemplo a Acerca De), y regresas, tu progreso se borrará. También no se guarda automáticamente, por lo que tendrás que darle click cada vez que quieras guardar, al botón Guardar que se encuentra en el panel de la izquierda (sep, a la vieja escuela).", "info");
 }
 
 /* Here is where I leveraged the almost-static breakpoints of TailwindCSS and I had to put every situation */

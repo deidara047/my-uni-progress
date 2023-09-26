@@ -31,7 +31,7 @@
     @dragstart="() => emit('drag-course-start', {'code': props.courseData.code})"
     @dragend="() => emit('drag-course-end')"
   >
-    <div v-if="props.courseData.isPassed" class="text-xs golden-background">
+    <div v-if="props.courseData.isPassed || props.courseData.is_passed" class="text-xs golden-background">
       <h3 class="text-white text-center font-medium text-with-border">Curso Ganado</h3>
     </div>
     <div v-if="props.type === 'belong-to-season' && showXButton" class="cc-x-button" @mouseenter.prevent="() => showXButton = true" @mouseleave="() => showXButton = false" @click="onXButtonCourseClick">
@@ -39,7 +39,7 @@
     </div>
     <div class="flex text-sm" @mouseenter.prevent="() => showXButton = true" @mouseleave="() => showXButton = false">
       <div class="course-colour border w-[12px]"
-        :style="{ borderColor: getColorByBelongsTo(props.courseData.belongsTo, true), backgroundColor: getColorByBelongsTo(props.courseData.belongsTo, false) }">
+        :style="{ borderColor: getColorByBelongsTo(props.courseData.belongsTo ?? props.courseData.belongs_to, true), backgroundColor: getColorByBelongsTo(props.courseData.belongsTo ?? props.courseData.belongs_to, false) }">
       </div>
       <div class="text-xs course-left-data" :class="[getColorsByMode.color2.color, getColorsByMode.color2.textColor]">
         <div class="p-[4px] course-code-div" :class="[getColorsByMode.color1.color, getColorsByMode.color1.textColor]">{{
@@ -53,7 +53,7 @@
         </div>
         <div class="course-is-required-div" :class="[getColorsByMode.color3.color]">
           <div class="dot-div text-2xl pr-[4px] font-bold">
-            {{ props.courseData.isRequired ? "*" : "" }}
+            {{ props.courseData.isRequired || props.courseData.is_required ? "*" : "" }}
             <div v-if="props.courseData.alongWith" class="text-xs p-1 rounded-md text-white my-1" :class="{
               'bg-[#4B81D5]': props.courseData.alongWith === 'L',
               'bg-[#F1556C]': props.courseData.alongWith === 'P',

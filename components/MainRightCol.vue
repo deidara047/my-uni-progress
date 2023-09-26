@@ -123,7 +123,7 @@
           </ul>
         </div>
       </div>
-      <div v-if="pageThatUsesThisComponent === 'MyRoute'" class="mt-4 w-[276px] r-card-paddingless">
+      <div v-if="pageThatUsesThisComponent === 'MyRoute'" class="mt-4 w-[279px] r-card-paddingless">
         <div @click="toggleMyRouteStatsPanel" class="cursor-pointer px-4 py-3 flex justify-between">
           <h2 style="user-select: none;" class="font-bold"
             :class="{ 'text-2xl': pageThatUsesThisComponent === 'MyIndex', 'text-lg': pageThatUsesThisComponent === 'MyRoute' }">
@@ -298,23 +298,23 @@ const electiveSeasonsCourses = computed(() => {
 })
 
 const coreCourses = computed(() => {
-  return [...props.coursesData.filter(elem => elem.isRequired === true)];
+  return [...props.coursesData.filter(elem => elem.isRequired === true || elem.is_required === true)];
 })
 
 const electiveCourses = computed(() => {
-  return [...props.coursesData.filter(elem => elem.isRequired === false)];
+  return [...props.coursesData.filter(elem => elem.isRequired === false || elem.is_required === true)];
 })
 
 const passedCoreCourses = computed(() => {
-  return [...props.coursesData.filter(elem => elem.isRequired === true && elem.isPassed === true)];
+  return [...props.coursesData.filter(elem => (elem.isRequired === true || elem.is_required === true) && (elem.isPassed === true || elem.is_passed === true))];
 })
 
 const passedElectiveCourses = computed(() => {
-  return [...props.coursesData.filter(elem => elem.isRequired === false && elem.isPassed === true)];
+  return [...props.coursesData.filter(elem => (elem.isRequired === false || elem.is_required === false) && (elem.isPassed === true || elem.is_passed === true))];
 })
 
 const passedCourses = computed(() => {
-  return [...props.coursesData.filter(elem => elem.isPassed === true)];
+  return [...props.coursesData.filter(elem => (elem.isPassed === true || elem.is_passed === true ))];
 });
 
 function getSumCreditsOfCoursesArr(arr) {

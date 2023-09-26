@@ -95,7 +95,6 @@ export default {
       });
 
       const orderedData = [];
-
       const years = Object.keys(organizedData).sort();
       years.forEach((yr) => {
         const sns = ["first-semester", "vacations-june", "second-semester", "vacations-december"];
@@ -127,7 +126,7 @@ export default {
     return {
       modules: [Navigation]
     };
-  },
+  }
 };
 
 </script>

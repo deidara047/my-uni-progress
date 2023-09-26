@@ -79,9 +79,10 @@
 </template>
 
 <script setup>
-import data from "@/assets/json/coursesData.json";
-import { onMounted, ref, reactive, computed, watchEffect } from 'vue';
+// import crsData from "@/assets/json/coursesData.json";
+import { onMounted, ref, reactive, computed} from 'vue';
 
+const supabase = useSupabaseClient();
 const rightColumnOpened = ref(true);
 
 const columnsWidths = computed(() => {
@@ -95,8 +96,16 @@ const columnsWidths = computed(() => {
 const coursesData = reactive([]);
 
 onMounted(() => {
-  coursesData.push(...data);
+  hydrateCoursesData();
 });
+
+async function hydrateCoursesData() {
+  let { data, error } = await supabase
+    .from('course')
+    .select('*');
+  coursesData.push(...data);
+  
+}
 
 useHead({
   title: "Cursos de Ingeniería en Sistemas en la USAC | Progreso FIUSAC"

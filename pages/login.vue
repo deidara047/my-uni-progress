@@ -81,7 +81,7 @@ definePageMeta({
     function(to, from) {
       const user = useSupabaseUser();
 
-      if(user) return navigateTo("/");
+      if(user.value) return navigateTo("/");
     }
   ]
 })
