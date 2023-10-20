@@ -62,8 +62,11 @@
           </div>
           <div v-show="isLeftColumnOpened">
             <div class="flex flex-col gap-y-2 max-w-[70%] mx-auto mb-3">
-              <button class="btn-primary"><font-awesome-icon :icon="['fas', 'floppy-disk']" /> Guardar</button>
-              <button @click="showInfoSaveButton" class="text-gray-500 text-xs hover:text-gray-400 transition-colors"><font-awesome-icon :icon="['fas', 'circle-info']" /> Más información...</button>
+              <button :disabled="!isSeasonsDataChanged" @click="saveSeasonsDataChanges"
+                class="btn-primary"><font-awesome-icon :icon="['fas', 'floppy-disk']" /> Guardar</button>
+              <button @click="showInfoSaveButton"
+                class="text-gray-500 text-xs hover:text-gray-400 transition-colors"><font-awesome-icon
+                  :icon="['fas', 'circle-info']" /> Más información...</button>
             </div>
             <!--h1 class="text-2xl font-semibold">Cursos</h1-->
             <hr />
@@ -196,6 +199,7 @@
 
 <script setup>
 // import crsData from "@/assets/json/coursesData.json";
+import isEqual from 'lodash/isEqual';
 import Swal from 'sweetalert2'
 
 const supabase = useSupabaseClient();
@@ -227,11 +231,18 @@ const coursesData = reactive([]);
   }
 ]
  */
+
 const seasonsData = reactive([]);
+const seasonsDataInit = []; // <-- This array is supposed to be setted once, initial data
+const isSeasonsDataChanged = computed(() => {
+  return !isEqual(seasonsData, seasonsDataInit) // JSON.parse(JSON.stringify(seasonsData)) !== JSON.parse(JSON.stringify(seasonsDataInit));
+});
 
 const currentDraggedCourseCode = ref("");
 
 const searchCriteria = ref("");
+// if currentSeasonsSliderIndex.value === -1, still hasn't being touched, else, we can say Guardar button has been clicked
+const currentSeasonsSliderIndex = ref(-1);
 const currentSemLPanIndex = ref(0);
 const isLeftColumnOpened = ref(true);
 const isRightColumnOpened = ref(true);
@@ -251,13 +262,25 @@ const coursesForLeftPanel = computed(() => {
   if (semsWithNoPassed.value.length > 0) {
     if (searchCriteria.value === "") {
       if (seasonsData.length > 0) {
-        return coursesData.filter((course) => (course.semester === semsWithNoPassed.value[currentSemLPanIndex.value] && (course.isPassed === false || course.is_passed === false) && !seasonsData.some(season => season.courses.includes(course))));
+        return coursesData.filter((course) => (course.semester === semsWithNoPassed.value[currentSemLPanIndex.value] && (course.isPassed === false || course.is_passed === false) && !seasonsData.some(season => {
+          let foundedCourse = false;
+          season.courses.forEach((cr) => {
+            if (cr.code === course.code) foundedCourse = true;
+          });
+          return foundedCourse;
+        })));
       } else {
         return coursesData.filter((course) => (course.semester === semsWithNoPassed.value[currentSemLPanIndex.value] && (course.isPassed === false || course.is_passed === false)));
       }
     } else {
       if (seasonsData.length > 0) {
-        return coursesData.filter((course) => (course.code.includes(searchCriteria.value.trim()) || removeAccents(course.name.toLowerCase()).includes(removeAccents(searchCriteria.value.trim()))) && !seasonsData.some(season => season.courses.includes(course))).slice(0, 6);
+        return coursesData.filter((course) => (course.code.includes(searchCriteria.value.trim()) || removeAccents(course.name.toLowerCase()).includes(removeAccents(searchCriteria.value.trim()))) && !seasonsData.some(season => {
+          let foundedCourse = false;
+          season.courses.forEach((cr) => {
+            if (cr.code === course.code) foundedCourse = true;
+          });
+          return foundedCourse;
+        })).slice(0, 6);
       } else {
         return coursesData.filter((course) => (course.code.includes(searchCriteria.value.trim()) || removeAccents(course.name.toLowerCase()).includes(removeAccents(searchCriteria.value.trim())))).slice(0, 6);
       }
@@ -270,16 +293,27 @@ useHead({
 });
 
 onMounted(() => {
+  hydrateCoursesData();
+  hydrateSeasonsData();
+  handleResize();
+  calcWidthSeasonCardSlider();
+  window.addEventListener("resize", handleResize);
+});
+
+/* You may noticed we could use this function in onMounted function, but I still haven't learn how to put this
+  in a Promise and then use it in onMounted so ¯\_(ツ)_/¯
+*/
+async function hydrateCoursesData() {
+  coursesData.splice(0, coursesData.length);
   supabase
     .from('course')
     .select('*')
     .then(({ data }) => {
       coursesData.push(...data);
-      hydrateSeasonsData();
-      
+
       // Method: find the lowest semester number with unpassed courses left
       let semCounter = 1;
-
+      semsWithNoPassed.value = [];
       while (true) {
         if (coursesData.filter((course) => (course.semester === semCounter && (course.isPassed === false || course.is_passed === false))).length > 0) {
           semsWithNoPassed.value.push(semCounter);
@@ -289,70 +323,81 @@ onMounted(() => {
         semCounter++;
       }
       // EndMethod
-
-      handleResize();
-      calcWidthSeasonCardSlider();
-      window.addEventListener("resize", handleResize);
-    });
-});
+    })
+}
 
 async function hydrateSeasonsData() {
-  supabase.rpc("get_seasons_and_its_courses")
-    .then((seasonsQuery) => {
-      /* So I still haven't learn how to make a proper query where I get the formated data directly from DB, i.e.:
-      Format of seasonData
-      [
-        {
-          type: String,
-          year: String,
-          courses: Array<String> // Array de code de cursos
-        }
-      ]
-  
-      So, I have a Many To Many relation with course and season tables, so because I don't know how to make a proper Array with JSON
-      format with all the data loaded from course table (depending on the courses codes,s saved in each season), so I made a left join and
-      I query repeated data, and the query looks like this:
-      (season_id bigint, season_type text, season_year text, course_semester bigint, course_code text, course_credits bigint, course_name text, course_is_required boolean, course_prerequisites text[], course_is_passed boolean, course_belongs_to bigint, course_along_with text)
-      sooo I'm gonna manually create the object so it can fit in my variable format of this page, seasonData
-    */
+  seasonsData.splice(0, seasonsData.length);
+  seasonsDataInit.splice(0, seasonsDataInit.length)
 
-      // Method: format the obtained data from query into the proper format of seasonData (the variable of this page), for more info, read above.
-      let formattedSeasonData = [];
+  let formattedSeasonData = [];
 
-      seasonsQuery.data.forEach((data) => {
-        let idxOfSeason = formattedSeasonData.findIndex((sn) => data.season_id === sn.id && data.season_type === sn.type && data.season_year === sn.year);
-        if (idxOfSeason === -1) {
-          formattedSeasonData.push({
-            id: data.season_id, type: data.season_type, year: data.season_year, courses: [{
-              semester: data.course_semester,
-              code: data.course_code,
-              credits: data.course_credits,
-              name: data.course_name,
-              is_required: data.course_is_required,
-              prerequisites: data.course_prerequisites,
-              is_passed: data.course_is_passed,
-              belongs_to: data.course_belongs_to,
-              along_with: data.course_along_with
-            }]
-          })
-        } else {
-          // Season where we are going to add the course
-          formattedSeasonData[idxOfSeason].courses.push({
-            semester: data.course_semester,
-            code: data.course_code,
-            credits: data.course_credits,
-            name: data.course_name,
-            is_required: data.course_is_required,
-            prerequisites: data.course_prerequisites,
-            is_passed: data.course_is_passed,
-            belongs_to: data.course_belongs_to,
-            along_with: data.course_along_with
-          })
-        }
+  supabase
+    .from("season")
+    .select("*")
+    .then((res1) => {
+      res1.data.forEach((data) => {
+        formattedSeasonData.push({
+          id: data.id, type: data.type, year: data.year, courses: []
+        })
       });
-      seasonsData.push(...formattedSeasonData);
-      dataLoaded.value = true;
-      return true
+
+      supabase.rpc("get_seasons_and_its_courses")
+        .then((seasonsQuery) => {
+          /* So I still haven't learn how to make a proper query where I get the formated data directly from DB, i.e.:
+          Format of seasonData
+          [
+            {
+              type: String,
+              year: String,
+              courses: Array<String> // Array de code de cursos
+            }
+          ]
+      
+          So, I have a Many To Many relation with course and season tables, so because I don't know how to make a proper Array with JSON
+          format with all the data loaded from course table (depending on the courses codes,s saved in each season), so I made a left join and
+          I query repeated data, and the query looks like this:
+          (season_id bigint, season_type text, season_year text, course_semester bigint, course_code text, course_credits bigint, course_name text, course_is_required boolean, course_prerequisites text[], course_is_passed boolean, course_belongs_to bigint, course_along_with text)
+          sooo I'm gonna manually create the object so it can fit in my variable format of this page, seasonData
+        */
+
+          // Method: format the obtained data from query into the proper format of seasonData (the variable of this page), for more info, read above.
+
+          seasonsQuery.data.forEach((data) => {
+
+            let idxOfSeason = formattedSeasonData.findIndex((sn) => data.season_id === sn.id && data.season_type === sn.type && data.season_year === sn.year);
+            if (idxOfSeason === -1) {
+              console.error("500 ERROR: Data does not add up. Contact the developer")
+            } else {
+              // Season where we are going to add the course
+              formattedSeasonData[idxOfSeason].courses.push({
+                semester: data.course_semester,
+                code: data.course_code,
+                credits: data.course_credits,
+                name: data.course_name,
+                is_required: data.course_is_required,
+                prerequisites: data.course_prerequisites,
+                is_passed: data.course_is_passed,
+                belongs_to: data.course_belongs_to,
+                along_with: data.course_along_with
+              })
+            }
+          });
+          // Alright, I realized that use reactive on seasonsData wasn't a good idea, so I have to do some ridiculous stuff like below, but meh I ain't changing it
+          seasonsData.push(...JSON.parse(JSON.stringify(formattedSeasonData)));
+          seasonsDataInit.push(...JSON.parse(JSON.stringify(formattedSeasonData)));
+
+          dataLoaded.value = true;
+
+          // This code does not work :(
+          // On save, go to the index I was, but does not change because the swiper does not still load
+          // But someday I will change it (I don't promise nothing)
+          if (currentSeasonsSliderIndex.value > -1) {
+            SCSCComponent.value.goToSlideNum(currentSeasonsSliderIndex.value)
+          }
+          // End code not working
+          return true
+        });
     });
 }
 
@@ -387,6 +432,166 @@ function addNewSeason(newSeasonData) {
   } else {
     seasonsData.push({ ...newSeasonData, courses: [] });
     SCSCComponent.value.goToSlide(type, year);
+  }
+}
+
+const compareChanges = () => {
+  const changes = [];
+
+  seasonsData.forEach((editedItem) => {
+    const initialItem = seasonsDataInit.find(
+      (item) => item.type === editedItem.type && item.year === editedItem.year
+    );
+
+    if (!initialItem) {
+      changes.push({ ...editedItem, action: 'new' });
+    } else {
+      const addedCourses = editedItem.courses.filter((course) => {
+        let courseFounded = false;
+        initialItem.courses.forEach((crs) => {
+          if (crs.code === course.code) courseFounded = true;
+        });
+        return !courseFounded;
+        // return !initialItem.courses.includes(course)});
+      });
+
+      const deletedCourses = initialItem.courses.filter((course) => {
+        let courseFounded = false;
+        editedItem.courses.forEach((crs) => {
+          if (crs.code === course.code) courseFounded = true;
+        });
+        return !courseFounded;
+        // return !editedItem.courses.includes(course);
+      });
+
+      if (addedCourses.length > 0 || deletedCourses.length > 0) {
+        const courseChange = {
+          id: editedItem.id,
+          type: editedItem.type,
+          year: editedItem.year,
+          added_courses: addedCourses,
+          deleted_courses: deletedCourses,
+          action: 'courses_modified',
+        };
+        changes.push(courseChange);
+      }
+    }
+  });
+
+  seasonsDataInit.forEach((initialItem) => {
+    const editedItem = seasonsData.find(
+      (item) => item.type === initialItem.type && item.year === initialItem.year
+    );
+
+    if (!editedItem) {
+      changes.push({ ...initialItem, action: 'deleted' });
+    }
+  });
+
+  return changes;
+};
+
+function saveSeasonsDataChanges() {
+  let allChanges = compareChanges();
+  let areThereErrors = false;
+
+  try {
+    if (allChanges.length === 0) {
+      console.error("ERROR 500: Tried to save new seasons data but no data was changed. Reload the site or if that does not works, contact the developer",);
+    } else {
+      // For modified courses from seasons
+      let changesCMData = allChanges.filter((seasonElem) => seasonElem.action === "courses_modified");
+
+      changesCMData.forEach(async (cm) => {
+        // Add new courses to the seasons this new courses belongs to
+        if (cm.added_courses.length > 0) {
+          let coursesToSave = [];
+          cm.added_courses.forEach((ac) => {
+            coursesToSave.push({ id_season: cm.id, code_course: ac.code })
+          });
+
+          const { data, error } = await supabase
+            .from('rel_course_season')
+            .insert(coursesToSave)
+            .select()
+
+          if (error) {
+            areThereErrors = true
+            throw error;
+          };
+        }
+
+        // Delete courses from the seasons this old courses belongs to
+        if (cm.deleted_courses.length > 0) {
+          cm.deleted_courses.forEach(async (ac) => {
+            const { error } = await supabase
+              .from('rel_course_season')
+              .delete()
+              .eq("id_season", cm.id)
+              .eq("code_course", ac.code)
+
+            if (error) {
+              areThereErrors = true
+              throw error;
+            }
+          });
+        }
+      })
+
+      // For new seasons
+      let changesDSData = allChanges.filter((seasonElem) => seasonElem.action === "new");
+
+      if (changesDSData.length > 0) {
+        changesDSData.forEach((ds) => {
+          // Add new season
+          supabase
+            .from('season')
+            .insert([{
+              type: ds.type,
+              year: ds.year
+            }])
+            .select()
+            .then(async (res) => {
+              console.log(res);
+              if (ds.courses.length > 0) {
+                let coursesToSave = [];
+
+                ds.courses.forEach(async (cr) => {
+                  coursesToSave.push({ id_season: res.id, code_course: cr.code })
+                });
+
+                const { data, error } = await supabase
+                  .from('rel_course_season')
+                  .insert(coursesToSave)
+                  .select()
+
+                if (error) {
+                  areThereErrors = true
+                  throw error;
+                };
+              }
+            })
+        });
+      }
+
+      // For deleted seasons
+      let changesDelData = allChanges.filter((seasonElem) => seasonElem.action === "deleted");
+
+      changesDelData.forEach(async (del) => {
+        await supabase
+          .from('season')
+          .delete()
+          .eq("id", del.id);
+      })
+      if (!areThereErrors) {
+        currentSeasonsSliderIndex.value = SCSCComponent.value.getCurrentIndex();
+        hydrateCoursesData();
+        hydrateSeasonsData();
+        Swal.fire("Datos guardados", "Los datos se han guardado con éxito", "success")
+      };
+    }
+  } catch (error) {
+    console.error(error)
   }
 }
 
@@ -434,7 +639,6 @@ function calcWidthSeasonCardSlider() {
   }
 }
 
-
 /* Copied from 'CoursesSeasonCard.vue' */
 function getTypeNameByTypeCode(typeCode) {
   switch (typeCode) {
@@ -460,7 +664,6 @@ function pushCourseToSeasonByTypeAndYear(type, year) {
 function deleteCourseFromSeasonByTypeAndYear(code, type, year) {
   for (let i = 0; i < seasonsData.length; i++) {
     if (seasonsData[i].year === year && seasonsData[i].type === type) {
-      console.log(seasonsData[i])
       seasonsData[i].courses.splice(seasonsData[i].courses.findIndex((course) => course.code === code), 1)
     }
   }

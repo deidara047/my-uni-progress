@@ -112,10 +112,18 @@ export default {
     onSwiper(swiper) {
       this.swiper = swiper
     },
+    goToSlideNum(num) {
+      if (this.swiper) {
+        this.swiper.slideTo(num);
+      }
+    },
     goToSlide(type, year) {
       if (this.swiper) {
         this.swiper.slideTo(this.orderedSeasonsData.findIndex((season) => season.year === year && season.type === type));
       }
+    },
+    getCurrentIndex() {
+      return this.swiper.activeIndex;
     },
     /* Prop drilling: order: CourseCard -> CoursesSeasonCard -> SeasonCardSliderContainer -> my-route */
     onXButtonCourseClick(data) {
