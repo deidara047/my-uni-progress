@@ -14,7 +14,10 @@
     <h2 class="font-bold text-2xl mt-2">Hola Luis (espero que seas Luis 😑)</h2>
 
     <p class="mt-2">En esta tabla tienes todos los cursos. Aquí puedes marcar si ya aprobaste un curso o viceversa.</p>
-
+    <p class="mt-2">Si al querer Aprobar un curso, ves que está deshabilitado el botón, y al pasar el cursor encima ves el siguiente mensaje: 'Está en un período', 
+      significa que se encuentra en un período (chécalo en Mi Ruta). No se puede aprobar un curso si se encuentra 
+      en un período. Para aprobarlo, debes primero eliminarlo del período.
+    </p>
     <template v-if="coursesData.length > 0">
       <div class="mt-3">
         <b>Buscar curso por nombre o código</b>
@@ -57,9 +60,9 @@
           </ul>
         </div>
 
-        <div class="relative overflow-auto h-[450px]  my-5">
+        <div class="relative overflow-auto h-[450px]">
           <table class="w-full text-sm text-left text-gray-500">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+            <thead style="z-index: 1" class="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0 shadow">
               <tr>
                 <th scope="col" style="width: 1px; white-space: nowrap;" class="px-6 py-3 text-end">
                   #
@@ -77,6 +80,9 @@
                   Es obligatorio
                 </th>
                 <th scope="col" class="px-6 py-3 text-center">
+                  En algún período
+                </th>
+                <th scope="col" class="px-6 py-3 text-center">
                   Aprobación
                 </th>
               </tr>
@@ -86,7 +92,7 @@
                 <RowCoursesTable v-for="(crs, index) in coursesForTable" :key="crs.code"
                   @approve-button-clicked="(type, code) => onApproveButtonClicked(type, code)" :index="index"
                   :code="crs.code" :name="crs.name" :semester="crs.semester" :is-passed="crs.is_passed"
-                  :is-required="crs.is_required" :is-loading="crs.isLoading" />
+                  :is-required="crs.is_required" :is-loading="crs.isLoading" :is-in-a-season="crs.isInASeason" />
               </template>
               <template v-else>
                 <tr class="text-center">
@@ -110,11 +116,11 @@
 const supabase = useSupabaseClient();
 const currentTab = ref("all");
 const coursesData = ref([]);
+const coursesInSeasons = ref([]);
 const searchCriteria = ref("");
 const coursesThatAreLoading = ref([]);
 
 const coursesForTable = computed(() => {
-  // (course.code.includes(searchCriteria.value.trim()) || removeAccents(course.name.toLowerCase()).includes(removeAccents(searchCriteria.value.trim())))
   if (searchCriteria.value === "") {
     if (currentTab.value === "approved-courses") {
       return [...coursesData.value.filter(course => (course.isPassed === true || course.is_passed === true))];
@@ -132,7 +138,6 @@ const coursesForTable = computed(() => {
       return [...coursesData.value.filter(course => (course.code.includes(searchCriteria.value.trim()) || removeAccents(course.name.toLowerCase()).includes(removeAccents(searchCriteria.value.trim()))))];
     }
   }
-
 });
 
 useHead({
@@ -140,7 +145,18 @@ useHead({
 });
 
 onMounted(() => {
-  hydrateCoursesData();
+  supabase
+    .from('grouped_seasons')
+    .select('*')
+    .then(({ data, error }) => {
+      if (error === null) {
+        coursesInSeasons.value.push(...data.map((elem) => elem.course));
+        hydrateCoursesData();
+      } else {
+        console.error(error);
+      }
+    });
+
 });
 
 function onApproveButtonClicked(type, code) {
@@ -190,6 +206,7 @@ async function hydrateCoursesData() {
 
   coursesData.value.push(...crs.data.map((crs) => ({
     ...crs,
+    isInASeason: coursesInSeasons.value.some((elem) => crs.code === elem),
     isLoading: false
   })));
 }
