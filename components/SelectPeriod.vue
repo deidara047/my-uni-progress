@@ -36,6 +36,7 @@
           <option value="vacations-december">Vacaciones Diciembre</option>
         </select>
         <select class="select-styled border" v-model="seasonData.year">
+          <option value="2022">2022</option>
           <option value="2023">2023</option>
           <option value="2024">2024</option>
           <option value="2025">2025</option>
@@ -57,6 +58,16 @@
 <script setup>
 // I'm going to use prop drilling as I shouldn't, I'm still learning though :P
 const emit = defineEmits(["createSeasonButtonClicked"]);
+const currentYear = inject("currentYear");
+const endYear = currentYear + 10;
+const years = Array.from({ length: endYear - currentYear + 1 }, (_, index) => currentYear + index);
+
+/*
+onMounted(() => {
+  console.log(years)
+});
+*/
+
 const props = defineProps({
   seasonsExists: Boolean,
   default: false

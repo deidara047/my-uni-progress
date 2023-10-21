@@ -200,10 +200,12 @@
 <script setup>
 // import crsData from "@/assets/json/coursesData.json";
 import isEqual from 'lodash/isEqual';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
+import { DateTime } from 'luxon';
 
 const supabase = useSupabaseClient();
 const dataLoaded = ref(false);
+const expiredCoursesChecked = ref(false);
 
 /**
  * Format of coursesData:
@@ -240,6 +242,10 @@ const isSeasonsDataChanged = computed(() => {
 
 const currentDraggedCourseCode = ref("");
 
+// More details in https://github.com/deidara047/my-uni-progress in README.md
+const dateInGuatemala = DateTime.now().setZone('America/Guatemala');
+provide("currentYear", dateInGuatemala.year);
+const parameters = [];
 const searchCriteria = ref("");
 // if currentSeasonsSliderIndex.value === -1, still hasn't being touched, else, we can say Guardar button has been clicked
 const currentSeasonsSliderIndex = ref(-1);
@@ -293,12 +299,99 @@ useHead({
 });
 
 onMounted(() => {
+  // Hydrate the parameters
+  if (dateInGuatemala >= DateTime.fromISO(`${dateInGuatemala.year}-05-16T00:00:00`, { zone: 'America/Guatemala' })) {
+    parameters.push("first-semester");
+  }
+
+  if (dateInGuatemala >= DateTime.fromISO(`${dateInGuatemala.year}-07-01T00:00:00`, { zone: 'America/Guatemala' })) {
+    parameters.push("vacations-june");
+  }
+
+  if (dateInGuatemala >= DateTime.fromISO(`${dateInGuatemala.year}-11-16T00:00:00`, { zone: 'America/Guatemala' })) {
+    parameters.push("second-semester");
+  }
+
+  if (dateInGuatemala >= DateTime.fromISO(`${dateInGuatemala.year}-12-31T00:00:00`, { zone: 'America/Guatemala' })) {
+    parameters.push("vacations-june");
+  }
+
   hydrateCoursesData();
   hydrateSeasonsData();
   handleResize();
   calcWidthSeasonCardSlider();
   window.addEventListener("resize", handleResize);
 });
+
+function checkExpiredSeasonsAndDeleteThem() {
+  // Method: stablish if we have to delete expired seasons (More details in https://github.com/deidara047/my-uni-progress in README.md and /about page)
+  let seasons = [];
+
+  // Get all the seasons before the year you are visiting the sites
+  seasons.push(...seasonsData.filter((ssn) => ssn.year < dateInGuatemala.year));
+
+  // Get every expired season from the current year
+  parameters.forEach((par) => {
+    seasons.push(...seasonsData.filter((ssn) => {
+      return (Number(ssn.year) === dateInGuatemala.year) && (par === ssn.type)
+    }));
+  });
+
+  if (seasons.length > 0) {
+    Swal.fire({
+      title: 'ADVERTENCIA',
+      html: `
+                <div style="text-align: left;">
+                Tienes períodos ya expirados. Estos períodos serán eliminados. Estos son los períodos que serán eliminados:
+                </div>
+                <br />
+                <div style="text-align: left;">
+                <ul style="margin-left: 5px;">
+                  ${seasons.map((ssn) => `<li><b>&#8226;</b> ${getTypeNameByTypeCode(ssn.type) + " " + ssn.year}</li>`).join("")}
+                </ul>
+                <small style="display: flex; margin-top: 15px;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
+                    <circle cx="10" cy="10" r="9" fill="none" stroke="#888" stroke-width="2" />
+                    <text x="10" y="14" font-size="16" text-anchor="middle" fill="#888">!</text> <!-- Signo de exclamación gris -->
+                  </svg>
+                  <p style="margin-left: 5px;">Más información en 'Acerca De'</p>
+                </small>
+                </div>
+                `,
+      allowOutsideClick: false,
+      icon: 'warning',
+      showCancelButton: false,
+      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'OK'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (seasons && Array.isArray(seasons)) {
+          const promises = seasons.map(async (ssn) => {
+            let res = await supabase
+              .from("season")
+              .delete()
+              .eq("id", ssn.id);
+            console.log(ssn.id + " deleted!");
+            console.log(res);
+          });
+
+          Promise.all(promises)
+            .then(() => {
+              expiredCoursesChecked.value = true;
+              hydrateCoursesData();
+              hydrateSeasonsData();
+              Swal.fire("Períodos expirados eliminados con éxito", "Los periodos previamente mencionados han sido borrados con éxito. Recuerda siempre mantener tus períodos actualizados", "success");
+            })
+            .catch((error) => {
+              console.error(error)
+            })
+        } else {
+          console.error("La variable 'seasons' no es un arreglo válido.");
+        }
+      }
+    });
+  }
+}
 
 /* You may noticed we could use this function in onMounted function, but I still haven't learn how to put this
   in a Promise and then use it in onMounted so ¯\_(ツ)_/¯
@@ -328,7 +421,7 @@ async function hydrateCoursesData() {
 
 async function hydrateSeasonsData() {
   seasonsData.splice(0, seasonsData.length);
-  seasonsDataInit.splice(0, seasonsDataInit.length)
+  seasonsDataInit.splice(0, seasonsDataInit.length);
 
   let formattedSeasonData = [];
 
@@ -388,7 +481,7 @@ async function hydrateSeasonsData() {
           seasonsDataInit.push(...JSON.parse(JSON.stringify(formattedSeasonData)));
 
           dataLoaded.value = true;
-
+          if (!expiredCoursesChecked.value) checkExpiredSeasonsAndDeleteThem();
           // This code does not work :(
           // On save, go to the index I was, but does not change because the swiper does not still load
           // But someday I will change it (I don't promise nothing)
@@ -427,6 +520,13 @@ function addNewSeason(newSeasonData) {
     Swal.fire(
       'Período ya existente',
       "Ya existe un período con temporada '" + getTypeNameByTypeCode(type) + "' y con año '" + year + "'",
+      "error"
+    );
+    
+  } else if((parameters.includes(type) && Number(year) === Number(dateInGuatemala.year)) || (Number(year) < Number(dateInGuatemala.year))){
+    Swal.fire(
+      'Período fuera de tiempo',
+      "El período que intentas agregar ya está fuera de tiempo. Agrega uno más reciente. (Más información en Acerca De)",
       "error"
     );
   } else {

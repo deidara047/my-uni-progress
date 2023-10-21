@@ -34,19 +34,19 @@
             <div class="text-xs p-1 rounded-md w-fit px-1.5 font-bold text-white my-1 bg-[#4B81D5]">
               L
             </div>
-            <p class="translate-y-1 translate-x-1"> - Laboratorio</p>
+            <p class="translate-y-1 translate-x-1"> Laboratorio</p>
           </div>
           <div class="flex">
             <div class="text-xs p-1 rounded-md w-fit px-1.5 font-bold text-white my-1 bg-[#F1556C]">
               P
             </div>
-            <p class="translate-y-1 translate-x-1"> - Práctica</p>
+            <p class="translate-y-1 translate-x-1"> Práctica</p>
           </div>
           <div class="flex">
             <div class="text-xs p-1 rounded-md w-fit px-1.5 font-bold text-white my-1 bg-[#c0392b]">
               X
             </div>
-            <p class="translate-y-1 translate-x-1"> - No está disponible (temporalmente)</p>
+            <p class="translate-y-1 translate-x-1"> No está disponible (temporalmente)</p>
           </div>
         </div>
       </div>

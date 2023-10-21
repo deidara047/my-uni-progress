@@ -54,11 +54,11 @@
         <div class="course-is-required-div" :class="[getColorsByMode.color3.color]">
           <div class="dot-div text-2xl pr-[4px] font-bold">
             {{ props.courseData.isRequired || props.courseData.is_required ? "*" : "" }}
-            <div v-if="props.courseData.alongWith" class="text-xs p-1 rounded-md text-white my-1" :class="{
-              'bg-[#4B81D5]': props.courseData.alongWith === 'L',
-              'bg-[#F1556C]': props.courseData.alongWith === 'P',
-              'bg-[#c0392b]': props.courseData.alongWith === 'X'
-            }">{{ props.courseData.alongWith }}
+            <div v-if="props.courseData.along_with" class="text-xs p-1 rounded-md text-white my-1" :class="{
+              'bg-[#4B81D5]': props.courseData.along_with === 'L',
+              'bg-[#F1556C]': props.courseData.along_with === 'P',
+              'bg-[#c0392b]': props.courseData.along_with === 'X'
+            }">{{ props.courseData.along_with }}
             </div>
           </div>
         </div>
