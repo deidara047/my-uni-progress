@@ -82,12 +82,12 @@
               <div class="flex justify-end py-4">
                 <button :disabled="searchCriteria != ''"
                   class="border border-slate-300 disabled:bg-[#f1f5f94b] disabled:text-gray-300 enabled:hover:bg-slate-100 transition rounded-md p-1"
-                  @click="() => increaseSemLPanIndex()">
+                  @click="() => decreaseSemLPanIndex()">
                   <font-awesome-icon :icon="['fas', 'angle-left']" size="xl" />
                 </button>
                 <button :disabled="searchCriteria != ''"
                   class="border border-slate-300 disabled:bg-[#f1f5f94b] disabled:text-gray-300 enabled:hover:bg-slate-100 transition rounded-md ml-2 p-1"
-                  @click="() => decreaseSemLPanIndex()">
+                  @click="() => increaseSemLPanIndex()">
                   <font-awesome-icon :icon="['fas', 'angle-right']" size="xl" />
                 </button>
               </div>
@@ -508,6 +508,19 @@ watch(seasonsData, (newVal, oldVal) => {
      current Semester in the left panel, removes the current Semester from left panel and
      goes to the lowest semester with no passed courses left
   */
+  /*
+   console.log("Before: " + currentSemLPanIndex.value);
+   console.log("After: " + Number(currentSemLPanIndex.value + 1));
+   const numbCourses = coursesData.filter((course) => (course.semester === semsWithNoPassed.value[currentSemLPanIndex.value + 1] && (course.isPassed === false || course.is_passed === false) && !seasonsData.some(season => {
+     let foundedCourse = false;
+     season.courses.forEach((cr) => {
+       if (cr.code === course.code) foundedCourse = true;
+     });
+     return foundedCourse;
+   }))).length;
+ 
+   console.log(numbCourses);
+   */
   if (coursesForLeftPanel.value.length === 0) {
     semsWithNoPassed.value.splice(currentSemLPanIndex.value, 1);
   }
@@ -522,8 +535,8 @@ function addNewSeason(newSeasonData) {
       "Ya existe un período con temporada '" + getTypeNameByTypeCode(type) + "' y con año '" + year + "'",
       "error"
     );
-    
-  } else if((parameters.includes(type) && Number(year) === Number(dateInGuatemala.year)) || (Number(year) < Number(dateInGuatemala.year))){
+
+  } else if ((parameters.includes(type) && Number(year) === Number(dateInGuatemala.year)) || (Number(year) < Number(dateInGuatemala.year))) {
     Swal.fire(
       'Período fuera de tiempo',
       "El período que intentas agregar ya está fuera de tiempo. Agrega uno más reciente. (Más información en Acerca De)",
@@ -797,14 +810,64 @@ function deleteSeasonByTypeAndYear(type, year) {
 
 /* Those have a circular behaviour. Let N be length of array. When currentSemLPanIndex reaches N, on increase goes back 
    to 0, and viceversa
-   Credits to this algorith: ChatGPT
+   Credits to this algorithm: ChatGPT
 */
-const increaseSemLPanIndex = () => {
-  currentSemLPanIndex.value = (currentSemLPanIndex.value - 1 + semsWithNoPassed.value.length) % semsWithNoPassed.value.length;
+const decreaseSemLPanIndex = () => {
+  let amountToOperate = 1;
+
+  let counter = 1;
+
+  while (true) {
+    const numbCourses = coursesData.filter((course) => (course.semester === semsWithNoPassed.value[(currentSemLPanIndex.value - amountToOperate + semsWithNoPassed.value.length) % semsWithNoPassed.value.length] && (course.isPassed === false || course.is_passed === false) && !seasonsData.some(season => {
+      let foundedCourse = false;
+      season.courses.forEach((cr) => {
+        if (cr.code === course.code) foundedCourse = true;
+      });
+      return foundedCourse;
+    }))).length;
+
+    if (numbCourses != 0 || counter == 10) {
+      break;
+    } else {
+      amountToOperate += 1;
+    }
+
+
+    counter += 1;
+  }
+
+  if(counter == 10) window.alert("ERROR 500: Something with counting the semesters idk. Contact the developer");
+
+  currentSemLPanIndex.value = (currentSemLPanIndex.value - amountToOperate + semsWithNoPassed.value.length) % semsWithNoPassed.value.length;
 };
 
-const decreaseSemLPanIndex = () => {
-  currentSemLPanIndex.value = (currentSemLPanIndex.value + 1) % semsWithNoPassed.value.length;
+const increaseSemLPanIndex = () => {
+  let amountToOperate = 1;
+
+  let counter = 1;
+
+  while (true) {
+    const numbCourses = coursesData.filter((course) => (course.semester === semsWithNoPassed.value[(currentSemLPanIndex.value + amountToOperate) % semsWithNoPassed.value.length] && (course.isPassed === false || course.is_passed === false) && !seasonsData.some(season => {
+      let foundedCourse = false;
+      season.courses.forEach((cr) => {
+        if (cr.code === course.code) foundedCourse = true;
+      });
+      return foundedCourse;
+    }))).length;
+
+    console.log("numbCourses:")
+    if (numbCourses != 0 || counter === 10) {
+      break;
+    } else {
+      amountToOperate += 1;
+    }
+
+
+    counter += 1;
+  }
+
+  if(counter == 10) window.alert("ERROR 500: Something with counting the semesters idk. Contact the developer");
+  currentSemLPanIndex.value = (currentSemLPanIndex.value + amountToOperate) % semsWithNoPassed.value.length;
 };
 
 function removeAccents(text) {
