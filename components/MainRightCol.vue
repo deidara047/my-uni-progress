@@ -258,7 +258,7 @@ const coreSeasonsCourses = computed(() => {
   if(props.seasonsData.length > 0) {
     return props.seasonsData.reduce((collector, elem) => {
       if(elem.courses.length > 0) {
-        return collector.concat(elem.courses.filter(elem => elem.isRequired === true));
+        return collector.concat(elem.courses.filter(elem => elem.isRequired === true || elem.is_required === true));
       } else {
         return collector;
       }
@@ -287,7 +287,7 @@ const electiveSeasonsCourses = computed(() => {
   if(props.seasonsData.length > 0) {
     return props.seasonsData.reduce((collector, elem) => {
       if(elem.courses.length > 0) {
-        return collector.concat(elem.courses.filter(elem => elem.isRequired === false));
+        return collector.concat(elem.courses.filter(elem => elem.isRequired === false || elem.is_required === false));
       } else {
         return collector;
       }

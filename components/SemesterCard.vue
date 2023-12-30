@@ -101,7 +101,7 @@ function getNumOrdinName(num) {
 }
 
 const passedCourses = computed(() => {
-  return [...props.semesterData.filter(elem => elem.isPassed === true)];
+  return [...props.semesterData.filter(elem => elem.isPassed === true || elem.is_passed === true)];
 })
 
 function getSumCreditsOfCoursesArr(arr) {
