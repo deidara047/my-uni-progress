@@ -135,7 +135,7 @@
           :class="{ 'max-h-fit': isMyRouteStatsPanelOpened, 'px-4': isMyRouteStatsPanelOpened, 'py-3': isMyRouteStatsPanelOpened }">
           <p class="mb-2">Gráficas de tus cursos <span class="font-semibold italic">ganados + seleccionados</span> en la ruta.</p>
           <hr class="mb-2" />
-          <span class="text-gray-600" v-if="(((Number(getSumCreditsOfCoursesArr(passedCourses) + getSumCreditsOfCoursesArr(seasonsCourses))) / 300) * 100) >= 100"><font-awesome-icon class="text-amber-500" :icon="['fas', 'medal']" /> Pensum cerrado</span>
+          <span class="text-gray-600 my-1 block" v-if="(((Number(getSumCreditsOfCoursesArr(passedCourses) + getSumCreditsOfCoursesArr(seasonsCourses))) / 300) * 100) >= 100"><font-awesome-icon class="text-amber-500" :icon="['fas', 'medal']" /> Pensum cerrado</span>
           <ul class="list-none list-inside">
             <li><span class="font-bold"><font-awesome-icon v-if="(((Number(getSumCreditsOfCoursesArr(passedCoreCourses) + getSumCreditsOfCoursesArr(coreSeasonsCourses))) / getSumCreditsOfCoursesArr(coreCourses)) * 100) >= 100" :icon="['fas', 'check']" style="color: #0c4f14;" /> Cursos obligatorios:</span></li>
             <li>
