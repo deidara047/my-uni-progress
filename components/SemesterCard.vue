@@ -11,7 +11,7 @@
       </h1>
     </div>
     <div v-if="!props.isSearching"><i class="text-sm text-slate-700">
-        <p>- Total: ({{ semesterData.length }} cursos: {{ getSumCreditsOfCoursesArr(semesterData) }} cdts)</p>
+        <p v-if="showTotalCoursesText">- Total: ({{ semesterData.length }} cursos: {{ getSumCreditsOfCoursesArr(semesterData) }} cdts)</p>
         <p v-if="showPassedCoursesText" >- Ganado: ({{ passedCourses.length }} cursos: {{ getSumCreditsOfCoursesArr(passedCourses) }} cdts)</p>
       </i></div>
     <hr class="mt-2 border-2 border-[#aeacac] mb-4" />
@@ -50,6 +50,10 @@ const props = defineProps({
     default: false
   },
   showPassedCoursesText: {
+    type: Boolean,
+    default: true
+  },
+  showTotalCoursesText: {
     type: Boolean,
     default: true
   },

@@ -63,9 +63,11 @@
           </div>
         </div>
       </div>
-      <div class="course-requirements-div p-[4px] min-w-[37px]"
+      <div class="course-requirements-div flex items-center p-[4px] min-w-[37px]"
         :class="[getColorsByMode.color1.color, getColorsByMode.color1.textColor]">
-        <p v-for="req in props.courseData.prerequisites">{{ req }}</p>
+        <div>
+          <p v-for="req in props.courseData.prerequisites">{{ req }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -132,42 +134,36 @@ const getColorsByMode = computed(() => {
         color2: { color: "bg-[#16a085]", textColor: "text-black" },
         color3: { color: "bg-[#2ecc71]", textColor: "text-black" },
       }
-      break;
     case "direct-post":
       return {
         color1: { color: "bg-[#EE2F33]", textColor: "text-white" },
         color2: { color: "bg-[#F27B7E]", textColor: "text-black" },
         color3: { color: "bg-[#ff7979]", textColor: "text-white" },
       }
-      break;
     case "chain-pre":
       return {
         color1: { color: "bg-[#9CCB89]", textColor: "text-white" },
         color2: { color: "bg-[#D2F4CB]", textColor: "text-black" },
         color3: { color: "bg-[#F1FFED]", textColor: "text-black" },
       }
-      break;
     case "chain-post":
       return {
         color1: { color: "bg-[#FD6C6C]", textColor: "text-white" },
         color2: { color: "bg-[#FFC5C7]", textColor: "text-black" },
         color3: { color: "bg-[#FFF3F6]", textColor: "text-black" },
       }
-      break;
     case "others":
       return {
         color1: { color: "bg-[#c7ecee]", textColor: "text-black" },
         color2: { color: "bg-[#dff9fb]", textColor: "text-black" },
         color3: { color: "bg-[#F6FAFF]", textColor: "text-black" },
       }
-      break;
     default:
       return {
         color1: { color: "bg-[#f69745]", textColor: "text-black" },
         color2: { color: "bg-[#fbbf8f]", textColor: "text-black" },
         color3: { color: "bg-[#fdd3b4]", textColor: "text-black" },
       }
-      break;
   }
 });
 

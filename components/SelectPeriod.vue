@@ -36,14 +36,7 @@
           <option value="vacations-december">Vacaciones Diciembre</option>
         </select>
         <select class="select-styled border" v-model="seasonData.year">
-          <option value="2022">2022</option>
-          <option value="2023">2023</option>
-          <option value="2024">2024</option>
-          <option value="2025">2025</option>
-          <option value="2026">2026</option>
-          <option value="2027">2027</option>
-          <option value="2028">2028</option>
-          <option value="2029">2029</option>
+          <option v-for="yr in years" :value="yr.toString()">{{ yr }}</option>
         </select>
       </div>
       <div>
@@ -55,18 +48,37 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { DateTime } from 'luxon';
+
 // I'm going to use prop drilling as I shouldn't, I'm still learning though :P
 const emit = defineEmits(["createSeasonButtonClicked"]);
-const currentYear = inject("currentYear");
-const endYear = currentYear + 10;
+const dateInGuatemala = DateTime.now().setZone('America/Guatemala');
+const currentYear = dateInGuatemala.year;
+const seasonsLeft = reactive([]);
+const endYear = currentYear + 8;
 const years = Array.from({ length: endYear - currentYear + 1 }, (_, index) => currentYear + index);
 
-/*
 onMounted(() => {
-  console.log(years)
+  if (dateInGuatemala < DateTime.fromISO(`${dateInGuatemala.year}-05-15T00:00:00`, { zone: 'America/Guatemala' })) {
+    seasonsLeft.push("first-semester");
+  }
+
+  if (dateInGuatemala < DateTime.fromISO(`${dateInGuatemala.year}-07-01T00:00:00`, { zone: 'America/Guatemala' })) {
+    seasonsLeft.push("vacations-june");
+  }
+
+  if (dateInGuatemala < DateTime.fromISO(`${dateInGuatemala.year}-11-15T00:00:00`, { zone: 'America/Guatemala' })) {
+    seasonsLeft.push("second-semester");
+  }
+
+  if (dateInGuatemala < DateTime.fromISO(`${dateInGuatemala.year}-12-31T00:00:00`, { zone: 'America/Guatemala' })) {
+    seasonsLeft.push("vacations-december");
+  }
+
+  seasonData.value.type = seasonsLeft[0];
+  seasonData.value.year = currentYear.toString();
 });
-*/
 
 const props = defineProps({
   seasonsExists: Boolean,
@@ -75,8 +87,8 @@ const props = defineProps({
 
 const seasonData = ref(
   {
-    type: 'first-semester',
-    year: '2023'
+    type: '...',
+    year: '...'
   }
 );
 </script>
