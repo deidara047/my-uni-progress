@@ -1,6 +1,6 @@
-# Mi Uni Progress 1.1.1
+# My Uni Progress 1.1.1
 
-- For an explanation in ***english***, go to [About this app](#about-this-app)
+- For an explanation in ***ENGLISH***, go to [About this app](#about-this-app)
 
 # Acerca De:
 Me llamo Luis.
