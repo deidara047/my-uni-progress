@@ -515,21 +515,46 @@ watch(seasonsData, (newVal, oldVal) => {
      current Semester in the left panel, removes the current Semester from left panel and
      goes to the lowest semester with no passed courses left
   */
-  /*
-   console.log("Before: " + currentSemLPanIndex.value);
-   console.log("After: " + Number(currentSemLPanIndex.value + 1));
-   const numbCourses = coursesData.filter((course) => (course.semester === semsWithNoPassed.value[currentSemLPanIndex.value + 1] && (course.isPassed === false || course.is_passed === false) && !seasonsData.some(season => {
-     let foundedCourse = false;
-     season.courses.forEach((cr) => {
-       if (cr.code === course.code) foundedCourse = true;
-     });
-     return foundedCourse;
-   }))).length;
- 
-   console.log(numbCourses);
-   */
-  if (coursesForLeftPanel.value.length === 0) {
-    semsWithNoPassed.value.splice(currentSemLPanIndex.value, 1);
+  if (coursesForLeftPanel.value.length === 0 && semsWithNoPassed.value.length > 0) {
+    // Check if there are truly no unpassed courses in the current semester
+    const currentSemester = semsWithNoPassed.value[currentSemLPanIndex.value];
+    const unpassedCoursesInSemester = coursesData.filter(
+      (course) => course.semester === currentSemester && (course.isPassed === false || course.is_passed === false)
+    );
+    
+    // Only remove the semester if there are no unpassed courses at all
+    if (unpassedCoursesInSemester.length === 0) {
+      semsWithNoPassed.value.splice(currentSemLPanIndex.value, 1);
+      // Adjust the index if needed
+      if (currentSemLPanIndex.value >= semsWithNoPassed.value.length && semsWithNoPassed.value.length > 0) {
+        currentSemLPanIndex.value = semsWithNoPassed.value.length - 1;
+      }
+    } else {
+      // Move to next semester with unpassed courses
+      let amountToOperate = 1;
+      let counter = 1;
+      
+      while (true) {
+        const numbCourses = coursesData.filter((course) => (course.semester === semsWithNoPassed.value[(currentSemLPanIndex.value + amountToOperate) % semsWithNoPassed.value.length] && (course.isPassed === false || course.is_passed === false) && !seasonsData.some(season => {
+          let foundedCourse = false;
+          season.courses.forEach((cr) => {
+            if (cr.code === course.code) foundedCourse = true;
+          });
+          return foundedCourse;
+        }))).length;
+        
+        if (numbCourses != 0 || counter === 10) {
+          break;
+        } else {
+          amountToOperate += 1;
+        }
+        counter += 1;
+      }
+      
+      if (counter < 10) {
+        currentSemLPanIndex.value = (currentSemLPanIndex.value + amountToOperate) % semsWithNoPassed.value.length;
+      }
+    }
   }
 })
 
