@@ -9,27 +9,27 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.7.2",
-    "@fortawesome/free-brands-svg-icons": "^6.7.2",
-    "@fortawesome/free-regular-svg-icons": "^6.7.2",
-    "@fortawesome/free-solid-svg-icons": "^6.7.2",
-    "@fortawesome/vue-fontawesome": "^3.1.2",
+    "@fortawesome/fontawesome-svg-core": "^7.3.1",
+    "@fortawesome/free-brands-svg-icons": "^7.3.1",
+    "@fortawesome/free-regular-svg-icons": "^7.3.1",
+    "@fortawesome/free-solid-svg-icons": "^7.3.1",
+    "@fortawesome/vue-fontawesome": "^3.3.3",
     "@nuxtjs/google-fonts": "^3.2.0",
     "@nuxtjs/style-resources": "^1.2.2",
-    "@nuxtjs/supabase": "^2.0.1",
+    "@nuxtjs/supabase": "^2.1.0",
     "@nuxtjs/tailwindcss": "^6.14.0",
     "@originjs/vite-plugin-commonjs": "^1.0.3",
-    "@types/node": "^24.9.2",
+    "@types/node": "^26.6.6",
     "luxon": "^3.7.2",
-    "nuxt": "^3.20.0",
-    "sass": "^1.93.3",
-    "sass-loader": "^14.2.1",
-    "sweetalert2": "^11.26.3",
-    "swiper": "^12.0.3"
+    "nuxt": "^4.6.4",
+    "sass": "^1.108.2",
+    "sass-loader": "^17.1.0",
+    "sweetalert2": "^11.26.25",
+    "swiper": "^14.4.0"
   },
   "dependencies": {
-    "bootstrap": "^5.3.8",
-    "lodash": "^4.17.21"
+    "bootstrap": "^5.3.9",
+    "lodash": "^4.18.1"
   },
   "engines": {
     "node": "22.x",
